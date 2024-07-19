@@ -18,13 +18,16 @@ migrate = Migrate(app, db)
 from src.core.views import core_bp
 from src.admin.views import admin_bp
 from src.sponsor.views import sponsor_bp
+from src.influencer.views import influencer_bp
 
 app.register_blueprint(core_bp)
 app.register_blueprint(admin_bp, url_prefix="/admin")
 app.register_blueprint(sponsor_bp, url_prefix="/sponsor")
+app.register_blueprint(influencer_bp, url_prefix="/influencer")
 
 from src.admin.models import Admin
 from src.sponsor.models import Sponsor
+from src.influencer.models import Influencer
 
 login_manager.login_view = "sponsor.login"
 login_manager.login_message_category = "danger"
@@ -35,6 +38,8 @@ def load_user(user_id):
         return Admin.query.filter(Admin.id == int(user_id)).first()
     elif session.get("role") == "sponsor":
         return Sponsor.query.filter(Sponsor.id == int(user_id)).first()
+    elif session.get("role") == "influencer":
+        return Influencer.query.filter(Influencer.id == int(user_id)).first()
     return None
 
 @app.errorhandler(401)
