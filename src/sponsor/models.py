@@ -18,7 +18,7 @@ class Sponsor(UserMixin, db.Model): #UserMixin is a class that includes default 
 
     def __init__(self, email, password, name, industry, budget):
         self.email = email
-        self.password = bcrypt.generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(password).decode('utf8')
         self.created_on = datetime.now()
         self.role = "sponsor"
         self.name = name

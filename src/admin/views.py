@@ -10,7 +10,6 @@ admin_bp = Blueprint("admin", __name__)
 
 
 @admin_bp.route("/dashboard")
-@login_required
 def dashboard():
     if current_user.is_authenticated and session.get("role") == "admin":
         return render_template("admin/dashboard.html")
@@ -46,6 +45,7 @@ def login():
     
     if form.validate_on_submit():
         user = Admin.query.filter_by(email=form.email.data).first()
+        print(user.password)
         if user and bcrypt.check_password_hash(user.password, request.form["password"]):
             session["role"] = "admin"  # add role to session
             login_user(user)           

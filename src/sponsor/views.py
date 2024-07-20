@@ -9,7 +9,6 @@ sponsor_bp = Blueprint("sponsor", __name__)
 
 
 @sponsor_bp.route("/dashboard")
-@login_required
 def dashboard():
     if current_user.is_authenticated and session.get("role") == "sponsor":
         return render_template("sponsor/dashboard.html")
@@ -68,6 +67,6 @@ def login():
 def logout():
     logout_user()
     flash("You were logged out.", "success")
-    return redirect(url_for("sponsor.login"))
+    return redirect(url_for("core.home"))
 
 

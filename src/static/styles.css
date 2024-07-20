@@ -7,3 +7,49 @@
 a {
   text-decoration: none;
 }
+
+.hero-wrapper{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 35px 10px;
+}
+
+.hero-text-container{
+  max-width: 640px;
+}
+
+.hero-text{
+  font-size: 1.5rem;
+}
+
+.choice-container {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+}
+
+.half-width-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  min-height: 300px;
+  min-width: 300px;
+  width: 100%;
+  max-width: 50%;
+}
+
+.hero-image {
+  max-width: 300px;
+  border-radius: 15px;
+  display: block;
+}
+
+.hero-btn {
+  /* border-radius: 15px; */
+}

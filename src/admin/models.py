@@ -15,7 +15,7 @@ class Admin(UserMixin, db.Model): #UserMixin is a class that includes default im
 
     def __init__(self, email, password, role="admin"):
         self.email = email
-        self.password = bcrypt.generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(password).decode('utf8')
         self.created_on = datetime.now()
         self.role = role
 

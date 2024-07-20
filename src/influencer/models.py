@@ -26,7 +26,7 @@ class Influencer(UserMixin, db.Model): #UserMixin is a class that includes defau
 
     def __init__(self, email, password, name, category, niche, instagram_handle, instagram_followers, x_handle, x_followers, youtube_handle, youtube_subscribers, facebook_handle, facebook_followers):
         self.email = email
-        self.password = bcrypt.generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
         self.created_on = datetime.now()
         self.role = "influencer"
         self.name = name

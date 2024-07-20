@@ -29,7 +29,7 @@ from src.admin.models import Admin
 from src.sponsor.models import Sponsor
 from src.influencer.models import Influencer
 
-login_manager.login_view = "sponsor.login"
+login_manager.login_view = "core.home"
 login_manager.login_message_category = "danger"
 
 @login_manager.user_loader
