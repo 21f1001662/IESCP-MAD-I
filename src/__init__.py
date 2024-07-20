@@ -55,3 +55,10 @@ def page_not_found(error):
 @app.errorhandler(500)
 def server_error_page(error):
     return render_template("errors/500.html"), 500
+
+# utils 
+@app.template_filter('trim_description')
+def trim_description(description):
+    if len(description) > 120:
+        return description[:120] + '...'
+    return description

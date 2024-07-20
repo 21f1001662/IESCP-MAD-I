@@ -43,8 +43,9 @@ class Campaigns(UserMixin, db.Model): #UserMixin is a class that includes defaul
     budget = db.Column(db.Integer, nullable=False)
     visibility = db.Column(Enum(VisibilityEnum), nullable=False)
     goals = db.Column(db.String, nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('sponsors.id'))
 
-    def __init__(self, name, description, start_date, end_date, budget, visibility, goals):
+    def __init__(self, name, description, start_date, end_date, budget, visibility, goals, created_by):
         self.name = name
         self.description = description
         self.start_date = start_date
@@ -52,6 +53,7 @@ class Campaigns(UserMixin, db.Model): #UserMixin is a class that includes defaul
         self.budget = budget
         self.visibility = visibility
         self.goals = goals
+        self.created_by = created_by
 
     def __repr__(self):
-        return f"<email {self.email}>"
+        return f"<name {self.id} | {self.name}>"

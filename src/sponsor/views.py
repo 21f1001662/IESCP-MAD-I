@@ -17,7 +17,9 @@ def dashboard():
 @sponsor_bp.route("/campaigns")
 def campaigns():
     if current_user.is_authenticated and session.get("role") == "sponsor":
-        return render_template("sponsor/campaigns.html")
+        # fetch all campaigns created by the sponsor
+        campaigns = Campaigns.query.filter_by(created_by=current_user.id).all()
+        return render_template("sponsor/campaigns.html", campaigns=campaigns)
     else:
         return redirect(url_for("sponsor.login"))
 
@@ -33,7 +35,8 @@ def add_campaigns():
                 end_date=form.end_date.data,
                 budget=form.budget.data,
                 visibility=form.visibility.data,
-                goals=form.goals.data
+                goals=form.goals.data,
+                created_by=current_user.id
             )
             db.session.add(campaign)
             db.session.commit()            

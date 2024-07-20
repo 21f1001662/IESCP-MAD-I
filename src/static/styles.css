@@ -53,3 +53,29 @@ a {
 .hero-btn {
   /* border-radius: 15px; */
 }
+
+.hz-scl-box {
+  width: 100%;
+  overflow-x: scroll;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+}
+
+.card {
+  display: inline-block;
+}
+
+.create-new-campaign-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-campaign-btn-group{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
