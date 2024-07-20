@@ -7,13 +7,33 @@ from src.sponsor.models import Sponsor
 
 sponsor_bp = Blueprint("sponsor", __name__)
 
-
 @sponsor_bp.route("/dashboard")
 def dashboard():
     if current_user.is_authenticated and session.get("role") == "sponsor":
-        return render_template("sponsor/dashboard.html")
+        return render_template("sponsor/dashboard.html", request=request)
     else:
         return redirect(url_for("sponsor.login"))
+
+@sponsor_bp.route("/campaigns")
+def campaigns():
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        return render_template("sponsor/campaigns.html")
+    else:
+        return redirect(url_for("sponsor.login"))
+    
+@sponsor_bp.route("/stats")
+def stats():
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        return render_template("sponsor/stats.html")
+    else:
+        return redirect(url_for("sponsor.stats"))
+    
+@sponsor_bp.route("/find")
+def find():
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        return render_template("sponsor/find.html")
+    else:
+        return redirect(url_for("sponsor.find"))
 
 @sponsor_bp.route("/register", methods=["GET", "POST"])
 def register():
