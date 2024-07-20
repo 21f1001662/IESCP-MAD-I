@@ -23,12 +23,21 @@ def register():
         return redirect(url_for("influencer.dashboard"))
     form = InfluencerRegisterForm(request.form)
     if form.validate_on_submit():
+        print("form validated")
         influencer = Influencer(
             email=form.email.data, 
             password=form.password.data,
             name=form.name.data,
             category=form.category.data,
-            niche=form.niche.data
+            niche=form.niche.data,
+            x_handle=form.x_handle.data,
+            x_followers=form.x_followers.data,
+            youtube_handle=form.youtube_handle.data,
+            youtube_subscribers=form.youtube_subscribers.data,
+            facebook_handle=form.facebook_handle.data,
+            facebook_followers=form.facebook_followers.data,
+            instagram_handle=form.instagram_handle.data,
+            instagram_followers=form.instagram_followers.data,
         )
         db.session.add(influencer)
         db.session.commit() 

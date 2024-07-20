@@ -28,7 +28,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:///testdb.sqlite"
+    SQLALCHEMY_DATABASE_URI = DATABASE_URI
     BCRYPT_LOG_ROUNDS = 1
     WTF_CSRF_ENABLED = False
 

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, StringField, IntegerField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length, URL, Optional
 from src.influencer.models import Influencer
 
 class InfluencerLoginForm(FlaskForm):
@@ -24,7 +24,14 @@ class InfluencerRegisterForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     category = StringField("Category", validators=[DataRequired()])
     niche = StringField("Niche", validators=[DataRequired()])
-    
+    instagram_handle = StringField("Instagram Handle", validators=[Optional(), URL()])
+    instagram_followers = IntegerField("Instagram Followers", validators=[Optional()])
+    x_handle = StringField("X Handle", validators=[Optional(), URL()])
+    x_followers = IntegerField("X Followers", validators=[Optional()])
+    youtube_handle = StringField("YouTube Handle", validators=[Optional(), URL()])
+    youtube_subscribers = IntegerField("YouTube Subscribers", validators=[Optional()])
+    facebook_handle = StringField("Facebook Handle", validators=[Optional(), URL()])
+    facebook_followers = IntegerField("Facebook Followers", validators=[Optional()])
 
     def validate(self, extra_validators=None):
         initial_validation = super(InfluencerRegisterForm, self).validate(extra_validators)
