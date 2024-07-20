@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, StringField, IntegerField
+from wtforms import EmailField, PasswordField, StringField, IntegerField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
-from src.sponsor.models import Sponsor
+from src.sponsor.models import Sponsor, VisibilityEnum
 
 class SponsorLoginForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired(), Email()])
@@ -38,3 +38,12 @@ class SponsorRegisterForm(FlaskForm):
             self.password.errors.append("Passwords must match")
             return False
         return True
+
+class CreateCampaignForm(FlaskForm):
+    name = StringField("Campaign Name", validators=[DataRequired()])
+    description = TextAreaField("Description", validators=[DataRequired()])
+    start_date = StringField("Start Date", validators=[DataRequired()])
+    end_date = StringField("End Date", validators=[DataRequired()])
+    budget = IntegerField("Budget", validators=[DataRequired()])
+    visibility = SelectField("Visibility", choices=[(visibility.name, visibility.value) for visibility in VisibilityEnum], validators=[DataRequired()])
+    goals = TextAreaField("Goals", validators=[DataRequired()])

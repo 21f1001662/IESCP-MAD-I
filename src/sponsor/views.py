@@ -1,9 +1,9 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import SponsorLoginForm, SponsorRegisterForm
+from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm
 
 from src import bcrypt, db
-from src.sponsor.models import Sponsor
+from src.sponsor.models import Sponsor, Campaigns
 
 sponsor_bp = Blueprint("sponsor", __name__)
 
@@ -20,6 +20,27 @@ def campaigns():
         return render_template("sponsor/campaigns.html")
     else:
         return redirect(url_for("sponsor.login"))
+
+@sponsor_bp.route("/campaigns/add", methods=["GET", "POST"])
+def add_campaigns():
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        form = CreateCampaignForm(request.form)
+        if form.validate_on_submit():
+            campaign = Campaigns(
+                name=form.name.data,
+                description=form.description.data,
+                start_date=form.start_date.data,
+                end_date=form.end_date.data,
+                budget=form.budget.data,
+                visibility=form.visibility.data,
+                goals=form.goals.data
+            )
+            db.session.add(campaign)
+            db.session.commit()            
+            flash("Campaign added successfully.", "success")
+            return redirect(url_for("sponsor.campaigns"))        
+        return render_template("sponsor/add_campaigns.html", form=form)
+    return redirect(url_for("sponsor.login"))
     
 @sponsor_bp.route("/stats")
 def stats():
