@@ -23,7 +23,6 @@
     {% include "sponsor/navbar.html" %}
     <div class="container">
         <br>
-
         <!-- messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -137,10 +136,6 @@
             </div>
             <div class="col-md-4"></div>
         </div>
-
-
-
-
     </div>
     <script>
         $(function () {
@@ -155,7 +150,5 @@
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
     {% block js %}{% endblock %}
-
 </body>
-
 </html>
