@@ -79,3 +79,22 @@ a {
   justify-content: center;
   align-items: center;
 }
+
+.form-cancel-del-btn-group{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.delete-btn{
+  max-width: 50px;
+  margin-left: 8px;
+  text-align: center;
+  padding: 8px 10px;
+}
+
+.cancel-btn-wrapper{
+  display:contents
+}

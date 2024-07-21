@@ -53,6 +53,11 @@ def edit_campaigns(campaign_id):
         if form.validate_on_submit():
             form = CreateCampaignForm(request.form)
             campaign = Campaigns.query.filter_by(id=campaign_id).first()
+            
+            if campaign.created_by != current_user.id:
+                flash("You are not authorized to edit this campaign.", "danger")
+                return redirect(url_for("sponsor.campaigns"))
+            
             campaign.name = form.name.data
             campaign.description = form.description.data
             campaign.start_date = form.start_date.data
@@ -67,6 +72,20 @@ def edit_campaigns(campaign_id):
             campaign_data = Campaigns.query.filter_by(id=campaign_id).first()
             form = CreateCampaignForm(obj = campaign_data)
             return render_template("sponsor/campaigns_form.html", form=form, purpose="PATCH")
+    return redirect(url_for("sponsor.login"))
+
+@sponsor_bp.route("/campaigns/delete/<int:campaign_id>", methods=["POST"])
+def delete_campaigns(campaign_id):
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        campaign_id = request.view_args["campaign_id"]
+        campaign = Campaigns.query.filter_by(id=campaign_id).first()
+        if campaign.created_by != current_user.id:
+            flash("You are not authorized to delete this campaign.", "danger")
+            return redirect(url_for("sponsor.campaigns"))
+        db.session.delete(campaign)
+        db.session.commit()
+        flash("Campaign deleted successfully.", "success")
+        return redirect(url_for("sponsor.campaigns"))
     return redirect(url_for("sponsor.login"))
     
 @sponsor_bp.route("/stats")

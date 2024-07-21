@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, StringField, IntegerField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
 from src.sponsor.models import Sponsor, VisibilityEnum
 
 class SponsorLoginForm(FlaskForm):
@@ -40,6 +40,7 @@ class SponsorRegisterForm(FlaskForm):
         return True
 
 class CreateCampaignForm(FlaskForm):
+    id = IntegerField("ID", validators=[Optional()])
     name = StringField("Campaign Name", validators=[DataRequired()])
     description = TextAreaField("Description", validators=[DataRequired()])
     start_date = StringField("Start Date", validators=[DataRequired()])
