@@ -20,6 +20,23 @@
     {% include "sponsor/navbar.html" %}
     <div class="container">
         <br>
+        <!-- messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        {% endif %}
+        {% endwith %}
         <br>
         
         <div class="{% if campaigns|length == 0 %}d-none{% endif %}">
@@ -42,6 +59,7 @@
                     </ul>
                     <div class="card-body">
                         <a href="/sponsor/campaigns/{{campaign.id}}" class="card-link">View More details</a>
+                        <a href="/sponsor/campaigns/edit/{{campaign.id}}" class="card-link">Edit</a>
                     </div>
                 </div>
                 {% endfor %}

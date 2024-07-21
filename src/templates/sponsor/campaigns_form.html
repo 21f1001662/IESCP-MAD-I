@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Add Campaign</title>
+    <title>{% if purpose == 'PATCH' %}Update{% else %}Add{% endif%} Campaign</title>
     <!-- meta -->
     <meta name="description" content="">
     <meta name="author" content="">
@@ -48,7 +48,8 @@
                 <main class="form-signin w-100 m-auto">
                     <form role="form" method="post" action="">
                         {{ form.csrf_token }}
-                        <h1 class="h3 mb-3 fw-normal text-center">Create Campaign</h1>
+                        <h1 class="h3 mb-3 fw-normal text-center">{% if purpose == 'PATCH' %}Update{% else %}Create{% endif%} Campaign</h1>
+                        <input type="hidden" name="_method" value="PATCH">
 
                         <div class="form-floating">
                             {{ form.name(placeholder="Campaign Name", class="form-control mb-2") }}
@@ -127,7 +128,7 @@
                             {% endfor %}
                             {% endif %}
                         </div>
-                        <button class="w-100 btn btn-lg btn-primary mb-2" type="submit">Create Campaign</button>
+                        <button class="w-100 btn btn-lg btn-primary mb-2" type="submit"> {% if purpose == 'PATCH' %} Update Campaign {% else %} Create Campaign {% endif%}</button>
                     </form>
                     <a href="{{ url_for('sponsor.campaigns')}}">
                         <button class="w-100 btn btn-lg btn-danger" type="submit">Cancel</button>

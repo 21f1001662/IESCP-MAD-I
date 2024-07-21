@@ -42,7 +42,31 @@ def add_campaigns():
             db.session.commit()            
             flash("Campaign added successfully.", "success")
             return redirect(url_for("sponsor.campaigns"))        
-        return render_template("sponsor/add_campaigns.html", form=form)
+        return render_template("sponsor/campaigns_form.html", form=form, purpose="POST")
+    return redirect(url_for("sponsor.login"))
+
+@sponsor_bp.route("/campaigns/edit/<int:campaign_id>", methods=["GET", "POST"])
+def edit_campaigns(campaign_id):
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        campaign_id = request.view_args["campaign_id"]
+        form = CreateCampaignForm(request.form)
+        if form.validate_on_submit():
+            form = CreateCampaignForm(request.form)
+            campaign = Campaigns.query.filter_by(id=campaign_id).first()
+            campaign.name = form.name.data
+            campaign.description = form.description.data
+            campaign.start_date = form.start_date.data
+            campaign.end_date = form.end_date.data
+            campaign.budget = form.budget.data
+            campaign.visibility = form.visibility.data
+            campaign.goals = form.goals.data
+            db.session.commit()
+            flash("Campaign updated successfully.", "success")
+            return redirect(url_for("sponsor.campaigns"))
+        else:
+            campaign_data = Campaigns.query.filter_by(id=campaign_id).first()
+            form = CreateCampaignForm(obj = campaign_data)
+            return render_template("sponsor/campaigns_form.html", form=form, purpose="PATCH")
     return redirect(url_for("sponsor.login"))
     
 @sponsor_bp.route("/stats")
