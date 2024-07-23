@@ -148,8 +148,9 @@ a {
   min-height: 100%;
   min-width: 400px;
   max-width: 400px;
-  /* border : 1px solid #d6d6d6; */
+  border : 1px solid #d6d6d6;
   border-radius: 10px;
+  margin: 20px 4px 0 0;
 }
 
 @media (max-width: 992px) {
@@ -159,6 +160,7 @@ a {
   .left-sticky-box {
     width: 100%; /* Full width when stacked */
     min-width: 100%; /* Full width when stacked */
+    margin-top: 14px;
   }
   .right-scroll-box {
     width: 100%; /* Full width when stacked */
