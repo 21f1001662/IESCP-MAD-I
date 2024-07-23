@@ -22,6 +22,15 @@ def campaigns():
         return render_template("sponsor/campaigns.html", campaigns=campaigns)
     else:
         return redirect(url_for("sponsor.login"))
+    
+@sponsor_bp.route("/campaigns/<int:campaign_id>", methods=["GET"])
+def campaign_details(campaign_id):
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        campaign_id = request.view_args["campaign_id"]
+        campaign_data = Campaigns.query.filter_by(id=campaign_id).first()
+        return render_template("sponsor/campaign_details.html", campaign=campaign_data)
+    else:
+        return redirect(url_for("sponsor.login"))
 
 @sponsor_bp.route("/campaigns/add", methods=["GET", "POST"])
 def add_campaigns():

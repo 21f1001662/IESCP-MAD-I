@@ -19,10 +19,10 @@
 <body>
     {% include "sponsor/navbar.html" %}
     <div class="container">
-        <br>
         <!-- messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
+        <br>
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4">
@@ -35,48 +35,96 @@
             </div>
             <div class="col-md-4"></div>
         </div>
+        <br>
         {% endif %}
         {% endwith %}
-        <br>
-        
-        <div class="{% if campaigns|length == 0 %}d-none{% endif %}">
-            <h3 style="margin-left: 5px">
-                Campaigns
-            </h3>
-            <div class="hz-scl-box">
-                {% for campaign in campaigns %}
-                <div class="card" style="min-width: 18rem; max-width: 18rem; margin: 5px">
-                    <img src="{{url_for('static', filename='images/campaign_thumbnail.png')}}" class="card-img-top"
-                        alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">{{campaign.name}}</h5>
-                        <p class="card-text">{{campaign.description | trim_description}}</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Start Date: {{campaign.start_date}}</li>
-                        <li class="list-group-item">End Date: {{campaign.end_date}}</li>
-                        <li class="list-group-item">Budget: ₹{{campaign.budget}}</li>
-                    </ul>
-                    <div class="card-body">
-                        <a href="/sponsor/campaigns/{{campaign.id}}" class="card-link">View More details</a>
-                        <a href="/sponsor/campaigns/edit/{{campaign.id}}" class="card-link">Edit</a>
+
+        <div class="two-row-layout-container">
+            <div class="left-sticky-box p-4">
+                <!-- left sticky box content -->
+                <div>
+                    <!-- for back button -->
+                    <a href="{{url_for('sponsor.campaigns')}}" style="color: black;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" viewBox="0 0 16 16" fill="currentColor"
+                            class="size-4">
+                            <path fill-rule="evenodd"
+                                d="M14 8a.75.75 0 0 1-.75.75H4.56l3.22 3.22a.75.75 0 1 1-1.06 1.06l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 0 1 1.06 1.06L4.56 7.25h8.69A.75.75 0 0 1 14 8Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        </svg>
+                        <Strong>Back</Strong>
+                    </a>
+                </div>
+                <div>
+                    <!-- center aligned image and Name -->
+                    <div class="text-center">
+                        <img src="{{url_for('static', filename='images/campaign_thumbnail.png')}}" style="width: 250px"
+                            alt="Campaign Image" class="rounded-circle">
+                        <h3>{{campaign.name}}</h3>
+                        <p>{{campaign.description }}</p>
                     </div>
                 </div>
-                {% endfor %}
+                <div>
+                    <!-- left aligned descriptions.  -->
+                    <div class="d-flex justify-content-between">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Start Date</th>
+                                    <td>{{campaign.start_date}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">End Date</th>
+                                    <td>{{campaign.end_date}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Goals</th>
+                                    <td>{{campaign.goals}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="/sponsor/campaigns/edit/{{campaign.id}}">
+                        <button class="btn btn-dark ms-2">Edit</button>
+                    </a>
+                </div>
             </div>
-        </div>
-        <div class="create-new-campaign-container mt-4">
-            <a href="/sponsor/campaigns/add">
-                <div class="add-campaign-btn-group">
-                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="75" height="75"
-                        viewBox="0 0 128 128">
-                        <path
-                            d="M 64 6.0507812 C 49.15 6.0507812 34.3 11.7 23 23 C 0.4 45.6 0.4 82.4 23 105 C 34.3 116.3 49.2 122 64 122 C 78.8 122 93.7 116.3 105 105 C 127.6 82.4 127.6 45.6 105 23 C 93.7 11.7 78.85 6.0507812 64 6.0507812 z M 64 12 C 77.3 12 90.600781 17.099219 100.80078 27.199219 C 121.00078 47.499219 121.00078 80.500781 100.80078 100.80078 C 80.500781 121.10078 47.500781 121.10078 27.300781 100.80078 C 7.0007813 80.500781 6.9992188 47.499219 27.199219 27.199219 C 37.399219 17.099219 50.7 12 64 12 z M 64 42 C 62.3 42 61 43.3 61 45 L 61 61 L 45 61 C 43.3 61 42 62.3 42 64 C 42 65.7 43.3 67 45 67 L 61 67 L 61 83 C 61 84.7 62.3 86 64 86 C 65.7 86 67 84.7 67 83 L 67 67 L 83 67 C 84.7 67 86 65.7 86 64 C 86 62.3 84.7 61 83 61 L 67 61 L 67 45 C 67 43.3 65.7 42 64 42 z">
-                        </path>
-                    </svg>
-                    <p class="fw-bold text-center">Create New Campaign</p>
+            <div class="right-scroll-box mt-4">
+                <!-- <div class="{% if campaigns|length == 0 %}d-none{% endif %}"> -->
+                <h3 style="margin-left: 5px;">
+                    Ad Requests
+                </h3>
+                <!-- </div> -->
+                <div class="row-like-cards-container">
+                    <!-- a horizontal row like box with text on left and two buttons on right -->
+                    <div class="row-like-card">
+                        <div>
+                            <p class="fw-bold m-0">Influenza | Description ... | Date | <span
+                                    class="badge text-bg-primary">Accepted</span> </p>
+                        </div>
+                        <div class="hz-btn-container">
+                            <a href="/sponsor/campaigns/edit/1">
+                                <button class="btn btn-dark">View</button>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </a>
+                <div class="create-new-campaign-container mt-4">
+                    <a href="/sponsor/campaigns/add">
+                        <div class="add-campaign-btn-group">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="75" height="75"
+                                viewBox="0 0 128 128">
+                                <path
+                                    d="M 64 6.0507812 C 49.15 6.0507812 34.3 11.7 23 23 C 0.4 45.6 0.4 82.4 23 105 C 34.3 116.3 49.2 122 64 122 C 78.8 122 93.7 116.3 105 105 C 127.6 82.4 127.6 45.6 105 23 C 93.7 11.7 78.85 6.0507812 64 6.0507812 z M 64 12 C 77.3 12 90.600781 17.099219 100.80078 27.199219 C 121.00078 47.499219 121.00078 80.500781 100.80078 100.80078 C 80.500781 121.10078 47.500781 121.10078 27.300781 100.80078 C 7.0007813 80.500781 6.9992188 47.499219 27.199219 27.199219 C 37.399219 17.099219 50.7 12 64 12 z M 64 42 C 62.3 42 61 43.3 61 45 L 61 61 L 45 61 C 43.3 61 42 62.3 42 64 C 42 65.7 43.3 67 45 67 L 61 67 L 61 83 C 61 84.7 62.3 86 64 86 C 65.7 86 67 84.7 67 83 L 67 67 L 83 67 C 84.7 67 86 65.7 86 64 C 86 62.3 84.7 61 83 61 L 67 61 L 67 45 C 67 43.3 65.7 42 64 42 z">
+                                </path>
+                            </svg>
+                            <p class="fw-bold text-center">Create New Ad Request</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 

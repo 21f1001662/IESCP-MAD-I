@@ -10,16 +10,16 @@
             <div class="d-flex flex-grow-1">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'sponsor.dashboard' %}active fw-bold{% endif %}" aria-current="page" href="{{ url_for('sponsor.dashboard') }}">Profile</a>
+                        <a class="nav-link {% if 'sponsor.dashboard' in request.endpoint  %}active fw-bold{% endif %}" aria-current="page" href="{{ url_for('sponsor.dashboard') }}">Profile</a>
                     </li>|
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'sponsor.campaigns' %}active fw-bold{% endif %}" href="{{ url_for('sponsor.campaigns') }}">Campaigns</a>
+                        <a class="nav-link {% if 'sponsor.campaign' in request.endpoint  %}active fw-bold{% endif %}" href="{{ url_for('sponsor.campaigns') }}">Campaigns</a>
                     </li>|
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'sponsor.find' %}active fw-bold{% endif %}" aria-disabled="true" href="{{ url_for('sponsor.find') }}">Find</a>
+                        <a class="nav-link {% if 'sponsor.find' in request.endpoint %}active fw-bold{% endif %}" aria-disabled="true" href="{{ url_for('sponsor.find') }}">Find</a>
                     </li>|
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'sponsor.stats' %}active fw-bold{% endif %}" aria-disabled="true" href="{{ url_for('sponsor.stats') }}">Stats</a>
+                        <a class="nav-link {% if 'sponsor.stats' in request.endpoint %}active fw-bold{% endif %}" aria-disabled="true" href="{{ url_for('sponsor.stats') }}">Stats</a>
                     </li>
                 </ul>
             </div>
