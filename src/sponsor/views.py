@@ -1,9 +1,10 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm
+from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm, InfluencerSearchForm
 
 from src import bcrypt, db
 from src.sponsor.models import Sponsor, Campaigns
+from src.influencer.models import Influencer
 
 sponsor_bp = Blueprint("sponsor", __name__)
 
@@ -82,6 +83,24 @@ def edit_campaigns(campaign_id):
             form = CreateCampaignForm(obj = campaign_data)
             return render_template("sponsor/campaigns_form.html", form=form, purpose="PATCH")
     return redirect(url_for("sponsor.login"))
+
+@sponsor_bp.route("/find", methods=["POST", "GET"])
+def find_influencers():
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        form = InfluencerSearchForm(request.form)
+        if form.validate_on_submit():
+            search_term = f"%{form.name.data}%"
+            category_term = f"%{form.category.data}%"
+            influencers = Influencer.query.filter(
+                Influencer.name.like(search_term),
+                Influencer.category.like(category_term)
+            ).all()
+            return render_template("sponsor/find.html", form=form, influencers=influencers)
+        
+        influencers = Influencer.query.all()
+        return render_template("sponsor/find.html", form=form, influencers=influencers)
+    else:
+        return redirect(url_for("sponsor.find"))
 
 @sponsor_bp.route("/campaigns/delete/<int:campaign_id>", methods=["POST"])
 def delete_campaigns(campaign_id):

@@ -48,3 +48,8 @@ class CreateCampaignForm(FlaskForm):
     budget = IntegerField("Budget", validators=[DataRequired()])
     visibility = SelectField("Visibility", choices=[(visibility.name, visibility.value) for visibility in VisibilityEnum], validators=[DataRequired()])
     goals = TextAreaField("Goals", validators=[DataRequired()])
+    
+class InfluencerSearchForm(FlaskForm):
+    name = StringField("Name", validators=[Optional()])
+    category = StringField("Category", validators=[Optional()])
+    
