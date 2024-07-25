@@ -56,7 +56,8 @@
                                     Name
                                 </td>
                                 <td>
-                                    <input type="text" id="name" value="{{ form.data.name | default('', true)}}" name="name" class="form-control" placeholder="Enter name ..." >
+                                    <input type="text" id="name" value="{{ form.data.name | default('', true)}}"
+                                        name="name" class="form-control" placeholder="Enter name ...">
                                 </td>
                             </tr>
                             <tr>
@@ -64,8 +65,8 @@
                                     Industry
                                 </td>
                                 <td>
-                                    <input type="text" id="category" value="{{form.data.category | default('', true)}}" name="category" class="form-control"
-                                        placeholder="Enter category ...">
+                                    <input type="text" id="category" value="{{form.data.category | default('', true)}}"
+                                        name="category" class="form-control" placeholder="Enter category ...">
                                 </td>
                             </tr>
                         </table>
@@ -84,17 +85,23 @@
                 <!-- </div> -->
                 <div class="row-like-cards-container">
                     <!-- a horizontal row like box with text on left and two buttons on right -->
-                     {% for influencer in influencers %}
+                    {% for influencer in influencers %}
                     <div class="row-like-card">
                         <div>
-                            <p class="fw-bold m-0">{{influencer.name}} | {{influencer.category}} | {{influencer.niche}} 
+                            <p class="fw-bold m-0">{{influencer.name}} | {{influencer.category}} | {{influencer.niche}}
                                 <!-- <span class="badge text-bg-primary">Accepted</span>  -->
-                                </p>
+                            </p>
                         </div>
                         <div class="hz-btn-container">
+                            {% if campaign_id %}
+                            <a href="/sponsor/ad_request/{{influencer.id}}?campaign_id={{campaign_id}}">
+                                <button class="btn btn-dark">Create Ad Request</button>
+                            </a>
+                            {% else %}
                             <a href="/sponsor/ad_request/{{influencer.id}}">
                                 <button class="btn btn-dark">Create Ad Request</button>
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
