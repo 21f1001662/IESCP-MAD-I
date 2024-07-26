@@ -155,7 +155,6 @@ def ad_request(ad_request_id):
         
         form = AdRequestUpdateForm(request.form)
         if form.validate_on_submit(): # update ad_request
-            print("form validated")
             ad_request.name = form.name.data
             ad_request.budget = form.budget.data
             db.session.commit()
