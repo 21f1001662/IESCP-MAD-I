@@ -8,12 +8,17 @@ class MessageVisibilityEnum(enum.Enum):
     SENT = "Sent"
     SEEN = "Seen"
 
+class AdRequestStatusEnum(enum.Enum):
+    Pending = "Pending"
+    Seen = "Seen"
+    Accepted = "Accepted"
+    Rejected = "Rejected"
+
 class Message(UserMixin, db.Model):
     __tablename__ = "messages"
 
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.String, nullable=False)
-    created_on = db.Column(db.DateTime, nullable=False)
     ad_request = db.Column(db.Integer, db.ForeignKey('ad_requests.id'))
     sender_name = db.Column(db.String, nullable=False)
     message_visibility = db.Column(Enum(MessageVisibilityEnum), nullable=False)
@@ -34,18 +39,22 @@ class AdRequest(UserMixin, db.Model):
     __tablename__ = "ad_requests"
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    status = db.Column(Enum(AdRequestStatusEnum), nullable=False)
     budget = db.Column(db.Integer, nullable=False)
     campaign = db.Column(db.Integer, db.ForeignKey('campaigns.id'))
     sponsor = db.Column(db.Integer, db.ForeignKey('sponsors.id'))
     influencer = db.Column(db.Integer, db.ForeignKey('influencers.id'))
     created_at = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, budget, campaign, sponsor, influencer):
+    def __init__(self, name, budget, campaign, sponsor, influencer):
+        self.name = name
+        self.status = AdRequestStatusEnum.Pending
         self.budget = budget
         self.campaign = campaign
         self.sponsor = sponsor
-        self.inflencer = influencer
+        self.influencer = influencer
         self.created_at = datetime.now()
         
     def __repr__(self):
-        return f"<id {self.id} | {self.budget}>"
+        return f"<id {self.id} | {self.name}>"

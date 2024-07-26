@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Create Ad request</title>
+    <!-- meta -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- styles -->
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+    {% include "sponsor/navbar.html" %}
+    <div class="container">
+        <!-- messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <br>
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        <br>
+        {% endif %}
+        {% endwith %}
+        <div class="create-ad-box-wrapper">
+            <div class="create-ad-box mt-4 p-4">
+                <div>
+                    <!-- left aligned descriptions.  -->
+                    <div class="d-flex justify-content-between">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">
+                                        <div class="text-center mb-4">
+                                            <img src="{{url_for('static', filename='images/girl_influencer.jpeg')}}"
+                                                style="width: 150px" alt="Influencer Image" class="rounded-circle">
+                                        </div>
+                                    </th>
+                                    <td style="vertical-align: bottom;">
+                                        <h4 class="mb-0">{{influencer.name}}</h4>
+                                        <p class="mb-4">
+                                            Hi, I'm an influencer who loves connecting with people and sharing my
+                                            journey. Through my content, I aim to inspire, entertain, and educate my
+                                            audience on multiple topics. Let's create something amazing together!
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Category</th>
+                                    <td>{{influencer.category}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Niche</th>
+                                    <td>{{influencer.niche}}</td>
+                                </tr>
+
+                                <!-- instagram -->
+                                {% if influencer.instagram_handle and influencer.instagram_followers %}
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Instagram Handle</th>
+                                    <td>
+                                        <a href="{{influencer.instagram_handle}}">{{influencer.instagram_handle}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Instagram Followers</th>
+                                    <td>
+                                        {{influencer.instagram_followers}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                                <!-- youtube -->
+                                {% if influencer.youtube_handle and influencer.youtube_subscribers %}
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Youtube Handle</th>
+                                    <td>
+                                        <a href="{{influencer.youtube_handle}}">{{influencer.youtube_handle}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Youtube Subscribers</th>
+                                    <td>
+                                        {{influencer.youtube_subscribers}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                                {% if influencer.facebook_handle and influencer.facebook_followers %}
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Facebook Handle</th>
+                                    <td>
+                                        <a href="{{influencer.facebook_handle}}">{{influencer.facebook_handle}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Facebook Followers</th>
+                                    <td>
+                                        {{influencer.facebook_followers}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                                {% if influencer.x_handle and influencer.x_followers %}
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">X Handle</th>
+                                    <td>
+                                        <a href="{{influencer.x_handle}}">{{influencer.x_handle}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">X Followers</th>
+                                    <td>
+                                        {{influencer.x_followers}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="ad-request-form">
+                    <h4 class="text-start mt-4">Update Ad Request</h4>
+                    <form role="form" method="post" action="">
+                        <div class="mb-2">
+                            {% if campaign_id %}
+                                <select name="campaign" class="form-select" aria-label="Default select example">
+                                    {% for campaign in campaigns %}
+                                        {% if campaign.id == campaign_id %}
+                                            <option value="{{campaign.id}}" selected>Campaign: {{campaign.name}}</option>
+                                        {% else %}
+                                            <option value="{{campaign.id}}">Campaign: {{campaign.name}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            {% else %}
+                                <select name="campaign" class="form-select" aria-label="Default select example">
+                                    <option selected>Select Campaign</option>
+                                    {% for campaign in campaigns %}
+                                        <option value="{{campaign.id}}">{{campaign.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
+                            {% if form.campaign.errors %}
+                            {% for error in form.campaign.errors %}
+                            <div class="alert alert-danger mt-2" role="alert">
+                                {{ error }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {{ form.name(placeholder="Ad Request Name", rows=5, class="form-control mb-2") }}
+                            {{ form.name.label }}
+                            {% if form.name.errors %}
+                            {% for error in form.name.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
+                            {{ form.budget(placeholder="Budget", rows=5, class="form-control mb-2") }}
+                            {{ form.budget.label }}
+                            {% if form.budget.errors %}
+                            {% for error in form.budget.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <!-- create Ad Request button -->
+                        <div class="text-end mt-2">
+                            <button class="btn btn-md btn-dark" type="submit">Update Request</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" type="text/javascript"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+    {% block js %}{% endblock %}
+
+</body>
+
+</html>

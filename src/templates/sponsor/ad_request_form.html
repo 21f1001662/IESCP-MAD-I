@@ -166,6 +166,17 @@
                             {% endif %}
                         </div>
                         <div class="form-floating">
+                            {{ form.name(placeholder="Ad Request Name", rows=5, class="form-control mb-2") }}
+                            {{ form.name.label }}
+                            {% if form.name.errors %}
+                            {% for error in form.name.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-floating">
                             {{ form.budget(placeholder="Budget", rows=5, class="form-control mb-2") }}
                             {{ form.budget.label }}
                             {% if form.budget.errors %}

@@ -94,11 +94,11 @@
                         </div>
                         <div class="hz-btn-container">
                             {% if campaign_id %}
-                            <a href="/sponsor/ad_request/{{influencer.id}}?campaign_id={{campaign_id}}">
+                            <a href="/sponsor/ad_request/create/{{influencer.id}}?campaign_id={{campaign_id}}">
                                 <button class="btn btn-dark">Create Ad Request</button>
                             </a>
                             {% else %}
-                            <a href="/sponsor/ad_request/{{influencer.id}}">
+                            <a href="/sponsor/ad_request/create/{{influencer.id}}">
                                 <button class="btn btn-dark">Create Ad Request</button>
                             </a>
                             {% endif %}

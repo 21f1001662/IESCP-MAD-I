@@ -1,11 +1,11 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm, InfluencerSearchForm, AdRequestForm
+from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm, InfluencerSearchForm, AdRequestForm, AdRequestUpdateForm
 
 from src import bcrypt, db
 from src.sponsor.models import Sponsor, Campaigns
 from src.influencer.models import Influencer
-from src.core.models import Message, AdRequest
+from src.core.models import Message, AdRequest, AdRequestStatusEnum
 
 sponsor_bp = Blueprint("sponsor", __name__)
 
@@ -30,7 +30,13 @@ def campaign_details(campaign_id):
     if current_user.is_authenticated and session.get("role") == "sponsor":
         campaign_id = request.view_args["campaign_id"]
         campaign_data = Campaigns.query.filter_by(id=campaign_id).first()
-        return render_template("sponsor/campaign_details.html", campaign=campaign_data)
+        
+        ad_requests = db.session.query(AdRequest, Sponsor, Influencer).\
+            join(Sponsor, AdRequest.sponsor == Sponsor.id).\
+            join(Influencer, AdRequest.influencer == Influencer.id).\
+            filter(AdRequest.campaign == campaign_id).all()
+        
+        return render_template("sponsor/campaign_details.html", campaign=campaign_data, ad_requests=ad_requests, AdRequestStatusEnum=AdRequestStatusEnum)
     else:
         return redirect(url_for("sponsor.login"))
 
@@ -132,7 +138,41 @@ def find():
     else:
         return redirect(url_for("sponsor.find"))
 
-@sponsor_bp.route("/ad_request/<int:influencer_id>", methods=["GET","POST"])
+
+@sponsor_bp.route("/ad_request/<int:ad_request_id>", methods=["GET", "POST"])
+def ad_request(ad_request_id):
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        ad_request_id = request.view_args["ad_request_id"]
+        ad_request = AdRequest.query.filter_by(id=ad_request_id).first()
+        
+        if ad_request is None:
+            flash("Ad request not found.", "danger")
+            return redirect(url_for("sponsor.campaigns"))
+        
+        elif ad_request.sponsor != current_user.id:
+            flash("You are not authorized to view this ad request.", "danger")
+            return redirect(url_for("sponsor.campaigns"))
+        
+        form = AdRequestUpdateForm(request.form)
+        if form.validate_on_submit(): # update ad_request
+            print("form validated")
+            ad_request.name = form.name.data
+            ad_request.budget = form.budget.data
+            db.session.commit()
+            flash("Ad request updated successfully.", "success")
+            return redirect(url_for("sponsor.ad_request", ad_request_id=ad_request_id))
+        
+        influencer = Influencer.query.filter_by(id=ad_request.influencer).first()
+        campaigns = Campaigns.query.filter_by(created_by=current_user.id).all()
+        messages = Message.query.filter_by(ad_request=ad_request_id).all()
+        form.name.data = ad_request.name
+        form.budget.data = ad_request.budget
+        form.campaign.data = ad_request.campaign
+        return render_template("sponsor/ad_request.html", ad_request=ad_request, influencer=influencer, messages=messages, form=form, campaigns=campaigns, campaign_id=ad_request.campaign)
+    else:
+        return redirect(url_for("sponsor.login"))
+
+@sponsor_bp.route("/ad_request/create/<int:influencer_id>", methods=["GET","POST"])
 def create_ad_request(influencer_id):
     if current_user.is_authenticated and session.get("role") == "sponsor":
         influencer_id = request.view_args["influencer_id"]
@@ -142,18 +182,13 @@ def create_ad_request(influencer_id):
         influencer = Influencer.query.filter_by(id=influencer_id).first()
         campaigns = Campaigns.query.filter_by(created_by=current_user.id).all()
         form = AdRequestForm(request.form)
-        
-        print(form.campaign.data)
         if (form.validate_on_submit()):
-            if form.campaign.data is None:
-                print ("Campaign is None")
-                flash("Please select a campaign.", "danger")
-                return redirect(f"/sponsor/ad_request/{influencer_id}")
             ad_request = AdRequest(
+                name = form.name.data,
                 budget=form.budget.data,
                 campaign=form.campaign.data,
                 sponsor=current_user.id,
-                influencer=influencer_id
+                influencer=influencer.id
             )
             db.session.add(ad_request)
             
@@ -163,6 +198,7 @@ def create_ad_request(influencer_id):
                 sender_name=current_user.name
             )
             db.session.add(message)
+            db.session.commit() 
             
             flash("Ad request Created successfully.", "success")
             return redirect(f"/sponsor/campaigns/{form.campaign.data}")

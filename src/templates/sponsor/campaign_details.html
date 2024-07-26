@@ -99,17 +99,31 @@
                 <!-- </div> -->
                 <div class="row-like-cards-container">
                     <!-- a horizontal row like box with text on left and two buttons on right -->
+                    {% for ad_request in ad_requests %}
                     <div class="row-like-card">
                         <div>
-                            <p class="fw-bold m-0">Influenza | Description ... | Date | <span
-                                    class="badge text-bg-primary">Accepted</span> </p>
+                            <p class=" m-0">
+                                <span class="fw-semibold">{{ ad_request[0].name}}</span> 
+                                with 
+                                <span class="fw-semibold">{{ ad_request[2].name}}</span>
+                                {% if ad_request[0].status == AdRequestStatusEnum.Pending %}
+                                <span class="badge text-bg-secondary">Pending</span> 
+                                {% elif ad_request[0].status == AdRequestStatusEnum.Accepted %}
+                                <span class="badge text-bg-success">Accepted</span> 
+                                {% elif ad_request[0].status == AdRequestStatusEnum.Seen %}
+                                <span class="badge text-bg-primary">Seen</span> 
+                                {% elif ad_request[0].status == AdRequestStatusEnum.Rejected %}
+                                <span class="badge text-bg-danger">Rejected</span> 
+                                {% endif %}
+                            </p>
                         </div>
                         <div class="hz-btn-container">
-                            <a href="/sponsor/campaigns/edit/1">
+                            <a href="/sponsor/ad_request/{{ad_request[0].id}}">
                                 <button class="btn btn-dark">View</button>
                             </a>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
                 <div class="create-new-campaign-container mt-4">
                     <a href="/sponsor/find?campaign_id={{campaign.id}}">
