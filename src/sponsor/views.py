@@ -171,6 +171,28 @@ def ad_request(ad_request_id):
     else:
         return redirect(url_for("sponsor.login"))
 
+@sponsor_bp.route("/ad_request/<int:ad_request_id>/send_message", methods=["POST"])
+def send_message(ad_request_id):
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        ad_request_id = request.view_args["ad_request_id"]
+        ad_request = AdRequest.query.filter_by(id=ad_request_id).first()
+        if ad_request.sponsor != current_user.id:
+            flash("You are not authorized to send a message for this ad request.", "danger")
+            return redirect(url_for("sponsor.campaigns"))
+        
+        form = AdRequestUpdateForm(request.form)
+        message = Message(
+            message=form.message.data,
+            ad_request=ad_request_id,
+            sender_name=current_user.name
+        )
+        db.session.add(message)
+        db.session.commit()
+        flash("Message sent successfully.", "success")
+        return redirect(url_for("sponsor.ad_request", ad_request_id=ad_request_id))
+    else:
+        return redirect(url_for("sponsor.login"))
+
 @sponsor_bp.route("/ad_request/create/<int:influencer_id>", methods=["GET","POST"])
 def create_ad_request(influencer_id):
     if current_user.is_authenticated and session.get("role") == "sponsor":

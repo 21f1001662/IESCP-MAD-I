@@ -20,27 +20,22 @@
     {% include "sponsor/navbar.html" %}
     <div class="container">
         <!-- messages -->
+        <!-- messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-        <br>
-        <div class="row">
-            <div class="col-md-4"></div>
-            <div class="col-md-4">
-                {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{message}}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endfor %}
+        <div class="floating-messages">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="col-md-4"></div>
+            {% endfor %}
         </div>
-        <br>
         {% endif %}
         {% endwith %}
-        <div class="create-ad-box-wrapper">
-            <div class="create-ad-box mt-4 p-4">
-                <div>
+        <div class="create-ad-box-wrapper ad-box-border mt-4">
+            <div class="create-ad-box p-4" style="border-radius: 0; border: 0px solid #d6d6d6;">
+                <div class="table-container">
                     <!-- left aligned descriptions.  -->
                     <div class="d-flex justify-content-between">
                         <table class="table">
@@ -140,22 +135,22 @@
                     <form role="form" method="post" action="">
                         <div class="mb-2">
                             {% if campaign_id %}
-                                <select name="campaign" class="form-select" aria-label="Default select example">
-                                    {% for campaign in campaigns %}
-                                        {% if campaign.id == campaign_id %}
-                                            <option value="{{campaign.id}}" selected>Campaign: {{campaign.name}}</option>
-                                        {% else %}
-                                            <option value="{{campaign.id}}">Campaign: {{campaign.name}}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
+                            <select name="campaign" class="form-select" aria-label="Default select example">
+                                {% for campaign in campaigns %}
+                                {% if campaign.id == campaign_id %}
+                                <option value="{{campaign.id}}" selected>Campaign: {{campaign.name}}</option>
+                                {% else %}
+                                <option value="{{campaign.id}}">Campaign: {{campaign.name}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
                             {% else %}
-                                <select name="campaign" class="form-select" aria-label="Default select example">
-                                    <option selected>Select Campaign</option>
-                                    {% for campaign in campaigns %}
-                                        <option value="{{campaign.id}}">{{campaign.name}}</option>
-                                    {% endfor %}
-                                </select>
+                            <select name="campaign" class="form-select" aria-label="Default select example">
+                                <option selected>Select Campaign</option>
+                                {% for campaign in campaigns %}
+                                <option value="{{campaign.id}}">{{campaign.name}}</option>
+                                {% endfor %}
+                            </select>
                             {% endif %}
                             {% if form.campaign.errors %}
                             {% for error in form.campaign.errors %}
@@ -193,6 +188,47 @@
                             <button class="btn btn-md btn-dark" type="submit">Update Request</button>
                         </div>
 
+                    </form>
+
+                </div>
+            </div>
+            <div class="message-box p-4">
+                <h4 class="">Messages</h4>
+                <div class="chat-container">
+                    {% for message in messages %}
+                    {% if message.sender_name == influencer.name %}
+                    <div class="text-message-wrapper-left">
+                        <div class="text-message left-color">
+                            {{message.message}}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-message-wrapper-right">
+                        <div class="text-message right-color">
+                            {{message.message}}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div>
+                    <form role="form" method="post" action="/sponsor/ad_request/{{ad_request.id}}/send_message">
+                        <div class="d-flex">
+                            <div class="form-floating flex-grow-1">
+                                {{ form.message(placeholder="Type your message", rows=5, class="form-control") }}
+                                {{ form.message.label }}
+                                {% if form.message.errors %}
+                                {% for error in form.message.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </div>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="text-end ms-2">
+                                <button class="btn btn-md btn-dark py-3" type="submit">Send</button>
+                            </div>
+                        </div>
                     </form>
 
                 </div>
