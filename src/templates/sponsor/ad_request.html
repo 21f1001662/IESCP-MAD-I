@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Create Ad request</title>
+    <title>Ad request</title>
     <!-- meta -->
     <meta name="description" content="">
     <meta name="author" content="">
@@ -20,7 +20,6 @@
     {% include "sponsor/navbar.html" %}
     <div class="container">
         <!-- messages -->
-        <!-- messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         <div class="floating-messages">
@@ -35,6 +34,18 @@
         {% endwith %}
         <div class="create-ad-box-wrapper ad-box-border mt-4">
             <div class="create-ad-box p-4" style="border-radius: 0; border: 0px solid #d6d6d6;">
+                <p class="mb-2 d-flex align-items-center">
+                    <span class="fw-semibold h4 m-0">{{ ad_request.name }}</span>
+                    {% if ad_request.status == AdRequestStatusEnum.Pending %}
+                    <span class="badge text-bg-secondary ms-2 align-middle">Pending</span>
+                    {% elif ad_request.status == AdRequestStatusEnum.Accepted %}
+                    <span class="badge text-bg-success ms-2 align-middle">Accepted</span>
+                    {% elif ad_request.status == AdRequestStatusEnum.Seen %}
+                    <span class="badge text-bg-primary ms-2 align-middle">Seen</span>
+                    {% elif ad_request.status == AdRequestStatusEnum.Rejected %}
+                    <span class="badge text-bg-danger ms-2 align-middle">Rejected</span>
+                    {% endif %}
+                </p>
                 <div class="table-container">
                     <!-- left aligned descriptions.  -->
                     <div class="d-flex justify-content-between">
@@ -48,7 +59,7 @@
                                         </div>
                                     </th>
                                     <td style="vertical-align: bottom;">
-                                        <h4 class="mb-0">{{influencer.name}}</h4>
+                                        <h5 class="mb-0">{{influencer.name}}</h5>
                                         <p class="mb-4">
                                             Hi, I'm an influencer who loves connecting with people and sharing my
                                             journey. Through my content, I aim to inspire, entertain, and educate my

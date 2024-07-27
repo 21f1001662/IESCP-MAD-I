@@ -167,7 +167,7 @@ def ad_request(ad_request_id):
         form.name.data = ad_request.name
         form.budget.data = ad_request.budget
         form.campaign.data = ad_request.campaign
-        return render_template("sponsor/ad_request.html", ad_request=ad_request, influencer=influencer, messages=messages, form=form, campaigns=campaigns, campaign_id=ad_request.campaign)
+        return render_template("sponsor/ad_request.html", ad_request=ad_request, influencer=influencer, messages=messages, form=form, campaigns=campaigns, campaign_id=ad_request.campaign, AdRequestStatusEnum=AdRequestStatusEnum)
     else:
         return redirect(url_for("sponsor.login"))
 
@@ -212,6 +212,7 @@ def create_ad_request(influencer_id):
                 influencer=influencer.id
             )
             db.session.add(ad_request)
+            db.session.commit()
             
             message = Message(
                 message=form.message.data,
@@ -222,7 +223,7 @@ def create_ad_request(influencer_id):
             db.session.commit() 
             
             flash("Ad request Created successfully.", "success")
-            return redirect(f"/sponsor/campaigns/{form.campaign.data}")
+            return redirect(f"/sponsor/ad_request/{ad_request.id}")
         return render_template("sponsor/ad_request_form.html", influencer=influencer, form=form, campaigns=campaigns, campaign_id=campaign_id)
     else:
         return redirect(url_for("sponsor.login"))
