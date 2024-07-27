@@ -211,11 +211,15 @@
                     <div class="text-message-wrapper-left">
                         <div class="text-message left-color">
                             {{message.message}}
+                            <div class="message-meta">
+                                <span class="message-time">message.sent_time </span>
+                                <span class="message-status">{{ message.message_visibility }}</span>
+                            </div>
                         </div>
                     </div>
                     {% else %}
                     <div class="text-message-wrapper-right">
-                        <div class="text-message right-color">
+                        <div class="text-message right-color text-wrap">
                             {{message.message}}
                         </div>
                     </div>

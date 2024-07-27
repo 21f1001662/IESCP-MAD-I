@@ -228,11 +228,14 @@ a {
   background: #555; /* Change the color on hover */
 }
 
-.text-message{
+.text-message {
   border: 1px solid #d6d6d6;
   max-width: 300px;
   padding: 10px;
   border-radius: 15px;
+  word-wrap: break-word; /* Ensures long words are wrapped to the next line */
+  overflow-wrap: break-word; /* Ensures long words are wrapped to the next line */
+  white-space: pre-wrap; /* Preserves white spaces and wraps text */
 }
 
 .left-color {
@@ -250,7 +253,7 @@ a {
   justify-content: end;
 }
 
-.text-message-wrapper-left{
+.text-message-wrapper-left {
   margin: 0px 0px 10px 0px;
   width: 100%;
   display: flex;
