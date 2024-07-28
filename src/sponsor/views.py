@@ -12,7 +12,15 @@ sponsor_bp = Blueprint("sponsor", __name__)
 @sponsor_bp.route("/dashboard")
 def dashboard():
     if current_user.is_authenticated and session.get("role") == "sponsor":
-        return render_template("sponsor/dashboard.html", request=request)
+        campaigns = Campaigns.query.filter_by(created_by=current_user.id).all()[:5]
+        sponsor = Sponsor.query.filter_by(id=current_user.id).first()
+        ad_requests = db.session.query(AdRequest, Sponsor, Influencer).\
+            join(Sponsor, AdRequest.sponsor == Sponsor.id).\
+            join(Influencer, AdRequest.influencer == Influencer.id).\
+            filter(AdRequest.sponsor == sponsor.id).all()[:5]
+        
+        return render_template("sponsor/dashboard.html", campaigns=campaigns, ad_requests=ad_requests, sponsor=sponsor, AdRequestStatusEnum=AdRequestStatusEnum)
+    
     else:
         return redirect(url_for("sponsor.login"))
 

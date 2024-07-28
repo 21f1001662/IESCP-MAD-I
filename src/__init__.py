@@ -62,3 +62,9 @@ def trim_description(description):
     if len(description) > 120:
         return description[:120] + '...'
     return description
+
+@app.template_filter('trim_heading')
+def trim_heading(heading):
+    if len(heading) > 30:
+        return heading[:30] + '...'
+    return heading
