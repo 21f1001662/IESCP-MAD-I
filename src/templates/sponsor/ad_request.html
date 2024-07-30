@@ -209,12 +209,8 @@
                     {% for message in messages %}
                     {% if message.sender_name == influencer.name %}
                     <div class="text-message-wrapper-left">
-                        <div class="text-message left-color">
+                        <div class="text-message left-color text-wrap">
                             {{message.message}}
-                            <div class="message-meta">
-                                <span class="message-time">message.sent_time </span>
-                                <span class="message-status">{{ message.message_visibility }}</span>
-                            </div>
                         </div>
                     </div>
                     {% else %}
@@ -245,7 +241,6 @@
                             </div>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>

@@ -64,3 +64,18 @@ class AdRequestForm(FlaskForm):
             self.budget.errors.append("Budget must be greater than 0")
             return False
         return True
+
+class AdRequestUpdateForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    budget = IntegerField("Budget", validators=[DataRequired()])
+    campaign = IntegerField("Campaign", validators=[DataRequired(message="Campaign is required")])
+    message = TextAreaField("Message", validators=[Optional()])
+    
+    def validate(self, extra_validators=None):
+        initial_validation = super(AdRequestUpdateForm, self).validate(extra_validators)
+        if not initial_validation:
+            return False
+        if self.budget.data <= 0:
+            self.budget.errors.append("Budget must be greater than 0")
+            return False
+        return True

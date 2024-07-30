@@ -1,11 +1,11 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchForm, AdRequestForm
+from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchForm, AdRequestForm, AdRequestUpdateForm
 
 from src import bcrypt, db
 from src.influencer.models import Influencer
 from src.sponsor.models import Campaigns, Sponsor
-from src.core.models import AdRequest, AdRequestStatusEnum
+from src.core.models import AdRequest, AdRequestStatusEnum, Message
 
 influencer_bp = Blueprint("influencer", __name__)
 
@@ -26,6 +26,62 @@ def requests():
             .filter(AdRequest.influencer == influencer.id).all()
         
         return render_template("influencer/requests.html", influencer=influencer, ad_requests=ad_requests, AdRequestStatusEnum=AdRequestStatusEnum)
+    else:
+        return redirect(url_for("influencer.login"))
+
+@influencer_bp.route("/ad_request/<int:ad_request_id>/send_message", methods=["POST"])
+def send_message(ad_request_id):
+    if current_user.is_authenticated and session.get("role") == "influencer":
+        ad_request_id = request.view_args["ad_request_id"]
+        ad_request = AdRequest.query.filter_by(id=ad_request_id).first()
+        if ad_request.influencer != current_user.id:
+            flash("You are not authorized to send a message for this ad request.", "danger")
+            return redirect(url_for("influencer.requests"))
+        
+        form = AdRequestUpdateForm(request.form)
+        message = Message(
+            message=form.message.data,
+            ad_request=ad_request_id,
+            sender_name=current_user.name
+        )
+        db.session.add(message)
+        db.session.commit()
+        flash("Message sent successfully.", "success")
+        return redirect(url_for("influencer.ad_request", ad_request_id=ad_request_id))
+    else:
+        return redirect(url_for("influencer.login"))  
+  
+@influencer_bp.route("/ad_request/<int:ad_request_id>", methods=['GET', 'POST'])
+def ad_request(ad_request_id):
+    if current_user.is_authenticated and session.get("role") == "influencer":
+        ad_request = AdRequest.query.filter_by(id=ad_request_id).first()
+        
+        if ad_request is None:
+            flash("Ad request not found!", "danger")
+            return redirect(url_for("influencer.requests"))
+        
+        if (ad_request.influencer != current_user.id):
+            flash("You do not have permission to view this ad request.", "danger")
+            return redirect(url_for("influencer.requests"))
+        
+        form = AdRequestUpdateForm(request.form)
+        if form.validate_on_submit():
+            ad_request.name = form.name.data
+            ad_request.budget = form.budget.data
+            ad_request.message = form.message.data
+            db.session.commit()
+            flash("Ad request updated successfully.", "success")
+            return redirect(url_for("influencer.ad_request", ad_request_id=ad_request_id))
+        
+        influencer = Influencer.query.filter_by(id = current_user.id).first()
+        campaign = Campaigns.query.filter_by(id = ad_request.campaign).first()
+        messages = Message.query.filter_by(ad_request = ad_request_id )
+        
+        form.name.data = ad_request.name
+        form.budget.data = ad_request.budget
+        form.campaign.data = ad_request.campaign
+        
+        return render_template("influencer/ad_request.html", form=form, ad_request=ad_request, influencer=influencer, messages=messages, campaign=campaign, AdRequestStatusEnum=AdRequestStatusEnum)
     else:
         return redirect(url_for("influencer.login"))
     
