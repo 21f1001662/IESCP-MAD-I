@@ -1,6 +1,6 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm, InfluencerSearchForm, AdRequestForm, AdRequestUpdateForm
+from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm, InfluencerSearchForm, AdRequestForm, AdRequestUpdateForm, AdRequestResponseForm
 
 from src import bcrypt, db
 from src.sponsor.models import Sponsor, Campaigns
@@ -17,7 +17,7 @@ def dashboard():
         ad_requests = db.session.query(AdRequest, Sponsor, Influencer).\
             join(Sponsor, AdRequest.sponsor == Sponsor.id).\
             join(Influencer, AdRequest.influencer == Influencer.id).\
-            filter(AdRequest.sponsor == sponsor.id).all()[:5]
+            filter(AdRequest.sponsor == sponsor.id, AdRequest.sender == AdRequestSenderEnum.Sponsor, AdRequest.status == AdRequestStatusEnum.Pending).all()
         
         return render_template("sponsor/dashboard.html", campaigns=campaigns, ad_requests=ad_requests, sponsor=sponsor, AdRequestStatusEnum=AdRequestStatusEnum)
     
@@ -175,7 +175,7 @@ def ad_request(ad_request_id):
         form.name.data = ad_request.name
         form.budget.data = ad_request.budget
         form.campaign.data = ad_request.campaign
-        return render_template("sponsor/ad_request.html", ad_request=ad_request, influencer=influencer, messages=messages, form=form, campaigns=campaigns, campaign_id=ad_request.campaign, AdRequestStatusEnum=AdRequestStatusEnum)
+        return render_template("sponsor/ad_request.html", ad_request=ad_request, influencer=influencer, messages=messages, form=form, campaigns=campaigns, campaign_id=ad_request.campaign, AdRequestStatusEnum=AdRequestStatusEnum, AdRequestSenderEnum=AdRequestSenderEnum)
     else:
         return redirect(url_for("sponsor.login"))
 
@@ -234,6 +234,23 @@ def create_ad_request(influencer_id):
             flash("Ad request Created successfully.", "success")
             return redirect(f"/sponsor/ad_request/{ad_request.id}")
         return render_template("sponsor/ad_request_form.html", influencer=influencer, form=form, campaigns=campaigns, campaign_id=campaign_id)
+    else:
+        return redirect(url_for("sponsor.login"))
+
+@sponsor_bp.route("/ad_request/response", methods=["POST"])
+def respond_to_ad_request():
+    if current_user.is_authenticated and session.get("role") == "sponsor":
+        form = AdRequestResponseForm(request.form)
+        if form.validate_on_submit():
+            ad_request = AdRequest.query.filter_by(id=form.ad_request_id.data).first()
+            if ad_request.sponsor != current_user.id:
+                flash("You are not authorized to respond to this ad request.", "danger")
+                return redirect(url_for("sponsor.dashboard"))
+            
+            ad_request.status = form.response.data
+            db.session.commit()
+            flash(f"Ad request {ad_request.status.value} successfully.", "success")
+            return redirect(url_for("sponsor.ad_request", ad_request_id=ad_request.id))
     else:
         return redirect(url_for("sponsor.login"))
 

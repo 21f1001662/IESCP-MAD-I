@@ -142,6 +142,59 @@
                     </div>
                 </div>
                 <div class="ad-request-form">
+                    {% if ad_request.sender == AdRequestSenderEnum.Influencer and ad_request.status ==
+                    AdRequestStatusEnum.Pending %}
+                    <h4 class="text-start mt-4">Respond to Ad Request</h4>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="min-width: 100px;">Ad Budget</th>
+                                <td>₹{{ad_request.budget}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="px-2 pe-5">You can negotiate with the Sponsor regarding the terms of the ad request. After
+                        finalizing the details, you can choose to either accept or reject the ad request below.</p>
+                    <form role="form" method="post" action="/sponsor/ad_request/response">
+                        <div class="text-end mt-2 pe-5">
+                            <input hidden name="ad_request_id" value="{{ad_request.id}}">
+                            <button class="btn btn-md btn-success" name="response" value="Accepted"
+                                type="submit">Accept</button>
+                            <button class="btn btn-md btn-danger" name="response" value="Rejected"
+                                type="submit">Reject</button>
+                        </div>
+                    </form>
+
+                    {% elif ad_request.sender == AdRequestSenderEnum.Influencer and ad_request.status ==
+                    AdRequestStatusEnum.Rejected %}
+
+                    {% elif ad_request.sender == AdRequestSenderEnum.Influencer and ad_request.status ==
+                    AdRequestStatusEnum.Completed %}
+
+                    {% elif ad_request.sender == AdRequestSenderEnum.Influencer and ad_request.status ==
+                    AdRequestStatusEnum.Accepted %}
+                    <h4 class="text-start mt-4">Update Ad Request Status</h4>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="min-width: 100px;">Ad Budget</th>
+                                <td>₹{{ad_request.budget}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="px-2 pe-5">You have accepted the ad request. Once you have achieved the goals specified in
+                        the request, please update the status below to indicate the completion of the ad request.</p>
+                    <div class="text-end mt-2 pe-5">
+                        <form role="form" method="post" action="/sponsor/ad_request/response">
+                            <div class="text-end mt-2 pe-5">
+                                <input hidden name="ad_request_id" value="{{ad_request.id}}">
+                                <button class="btn btn-md btn-success" name="response" value="Completed"
+                                    type="submit">Mark Complete</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {% else %}
                     <h4 class="text-start mt-4">Update Ad Request</h4>
                     <form role="form" method="post" action="">
                         <div class="mb-2">
@@ -200,7 +253,7 @@
                         </div>
 
                     </form>
-
+                    {% endif %}
                 </div>
             </div>
             <div class="message-box p-4">
