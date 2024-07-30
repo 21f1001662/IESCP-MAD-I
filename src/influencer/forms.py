@@ -45,3 +45,7 @@ class InfluencerRegisterForm(FlaskForm):
             self.password.errors.append("Passwords must match")
             return False
         return True
+    
+class CampaignSearchForm(FlaskForm):
+    name = StringField("Name", validators=[Optional()])
+    budget = IntegerField("Budget", validators=[Optional()])

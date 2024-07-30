@@ -17,13 +17,100 @@
 </head>
 
 <body>
-    {% include "influencer/navbar.html" %}
-
+    {% include "sponsor/navbar.html" %}
     <div class="container">
+        <!-- messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
         <br>
-        <h1>
-            Find
-        </h1>
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        <br>
+        {% endif %}
+        {% endwith %}
+
+        <div class="two-row-layout-container">
+            <div class="left-sticky-box p-4">
+                <!-- left sticky box content -->
+                <div>
+                    <h3 class="" style="margin-left: 5px;">
+                        Find Ad Campaigns
+                    </h3>
+                    <form role="form" method="post" action="">
+                        {{ form.csrf_token }}
+
+                        <!-- two column table stuctute -->
+                        <table class="w-100">
+                            <tr>
+                                <td>
+                                    Name
+                                </td>
+                                <td>
+                                    <input type="text" id="name" value="{{ form.data.name | default('', true)}}"
+                                        name="name" class="form-control" placeholder="Enter name ...">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Budget
+                                </td>
+                                <td>
+                                    <input type="number" id="budget" value="{{form.data.budget | default('', true)}}"
+                                        name="budget" class="form-control" placeholder="Enter Budget ...">
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="text-center mt-2">
+                            <button class="btn btn-md btn-dark" type="submit">Find !</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="right-scroll-box mt-4">
+                <!-- <div class="{% if campaigns|length == 0 %}d-none{% endif %}"> -->
+                <h3 style="margin-left: 5px;">
+                    Search Results
+                </h3>
+                <!-- </div> -->
+                <div class="row-like-cards-container">
+                    <!-- a horizontal row like box with text on left and two buttons on right -->
+                    {% for campaign in campaigns %}
+                    <div class="row-like-card">
+                        <div>
+                            <p class="m-0">
+                                <span class="fw-bold">
+                                    {{campaign[0].name}}
+                                </span>
+                                 by 
+                                <span class="fw-bold">
+                                    {{campaign[1].name}}
+                                </span>
+                                  with budget 
+                                <span class="fw-bold"> 
+                                    ₹{{campaign[0].budget}}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="hz-btn-container">
+                            <a href="/influencer/ad_request/create/{{campaign[0].id}}">
+                                <button class="btn btn-dark">Create Ad Request</button>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- scripts -->

@@ -1,9 +1,10 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import InfluencerLoginForm, InfluencerRegisterForm
+from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchForm
 
 from src import bcrypt, db
 from src.influencer.models import Influencer
+from src.sponsor.models import Campaigns, Sponsor
 
 influencer_bp = Blueprint("influencer", __name__)
 
@@ -21,10 +22,18 @@ def requests():
     else:
         return redirect(url_for("influencer.login"))
 
-@influencer_bp.route("/find")
+@influencer_bp.route("/find", methods=["GET", "POST"])
 def find():
     if current_user.is_authenticated and session.get("role") == "influencer":
-        return render_template("influencer/find.html")
+        form = CampaignSearchForm(request.form)
+        if form.validate_on_submit():
+            name_search_term = f"%{form.name.data}%"
+            budget_search_term = form.budget.data if form.budget.data else 0
+            campaigns = db.session.query(Campaigns, Sponsor).join(Sponsor, Campaigns.created_by == Sponsor.id).filter(Campaigns.name.ilike(name_search_term), Campaigns.budget >= budget_search_term).all()
+            return render_template("influencer/find.html", campaigns= campaigns, form=form)
+        
+        campaigns = db.session.query(Campaigns, Sponsor).join(Sponsor, Campaigns.created_by == Sponsor.id).all()
+        return render_template("influencer/find.html", campaigns= campaigns, form=form)
     else:
         return redirect(url_for("influencer.login"))
 
