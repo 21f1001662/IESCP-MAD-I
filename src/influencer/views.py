@@ -1,10 +1,11 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchForm
+from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchForm, AdRequestForm
 
 from src import bcrypt, db
 from src.influencer.models import Influencer
 from src.sponsor.models import Campaigns, Sponsor
+from src.core.models import AdRequest, AdRequestStatusEnum
 
 influencer_bp = Blueprint("influencer", __name__)
 
@@ -18,7 +19,35 @@ def dashboard():
 @influencer_bp.route("/requests")
 def requests():
     if current_user.is_authenticated and session.get("role") == "influencer":
-        return render_template("influencer/requests.html")
+        influencer = Influencer.query.get(current_user.id)
+        ad_requests = db.session.query(AdRequest, Campaigns, Sponsor)\
+            .join(Campaigns, AdRequest.campaign == Campaigns.id)\
+            .join(Sponsor, AdRequest.sponsor == Sponsor.id)\
+            .filter(AdRequest.influencer == influencer.id).all()
+        
+        return render_template("influencer/requests.html", influencer=influencer, ad_requests=ad_requests, AdRequestStatusEnum=AdRequestStatusEnum)
+    else:
+        return redirect(url_for("influencer.login"))
+    
+@influencer_bp.route("/ad_request/create/<int:campaign_id>", methods=["GET", "POST"])
+def create_ad_request(campaign_id):
+    if current_user.is_authenticated and session.get("role") == "influencer":
+        form = AdRequestForm(request.form)
+        campaign_id = request.view_args["campaign_id"]
+        campaign = Campaigns.query.get(campaign_id)
+        if form.validate_on_submit():
+            ad_request = AdRequest(
+                name=form.name.data,
+                budget=form.budget.data,
+                campaign=form.campaign.data,
+                sponsor=campaign.created_by,
+                influencer=current_user.id,
+            )
+            db.session.add(ad_request)
+            db.session.commit()
+            flash("Ad request created successfully.", "success")
+            return redirect(url_for("influencer.requests"))
+        return render_template("influencer/ad_request_form.html", campaign=campaign, campaign_id = campaign_id, form=form)
     else:
         return redirect(url_for("influencer.login"))
 

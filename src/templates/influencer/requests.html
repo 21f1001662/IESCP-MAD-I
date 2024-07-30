@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Requests</title>
+    <title>Ad Requests</title>
     <!-- meta -->
     <meta name="description" content="">
     <meta name="author" content="">
@@ -18,12 +18,173 @@
 
 <body>
     {% include "influencer/navbar.html" %}
-
     <div class="container">
+        <!-- messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
         <br>
-        <h1>
-            Influencer Requests
-        </h1>
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        <br>
+        {% endif %}
+        {% endwith %}
+
+        <div class="two-row-layout-container">
+            <div class="left-sticky-box p-4">
+                <!-- left sticky box content -->
+                <div>
+                    <!-- center aligned image and Name -->
+                    <div class="text-center">
+                        <img src="{{url_for('static', filename='images/girl_influencer.jpeg')}}" style="width: 180px"
+                            alt="Campaign Image" class="rounded-circle">
+                        <h3>{{influencer.name}}</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero quisquam aperiam amet veniam
+                            neque possimus Accusamus esse optio eligendi!</p>
+                    </div>
+                </div>
+                <div>
+                    <!-- left aligned descriptions.  -->
+                    <div class="d-flex justify-content-between">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Niche</th>
+                                    <td>{{influencer.niche}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Category</th>
+                                    <td>{{influencer.category}}</td>
+                                </tr>
+                                <!-- instagram -->
+                                {% if influencer.instagram_handle and influencer.instagram_followers %}
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Instagram Handle</th>
+                                    <td>
+                                        <a href="{{influencer.instagram_handle}}">{{influencer.instagram_handle}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Instagram Followers</th>
+                                    <td>
+                                        {{influencer.instagram_followers}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                        
+                                <!-- youtube -->
+                                {% if influencer.youtube_handle and influencer.youtube_subscribers %}
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Youtube Handle</th>
+                                    <td>
+                                        <a href="{{influencer.youtube_handle}}">{{influencer.youtube_handle}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Youtube Subscribers</th>
+                                    <td>
+                                        {{influencer.youtube_subscribers}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                        
+                                {% if influencer.facebook_handle and influencer.facebook_followers %}
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Facebook Handle</th>
+                                    <td>
+                                        <a href="{{influencer.facebook_handle}}">{{influencer.facebook_handle}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">Facebook Followers</th>
+                                    <td>
+                                        {{influencer.facebook_followers}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                        
+                                {% if influencer.x_handle and influencer.x_followers %}
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">X Handle</th>
+                                    <td>
+                                        <a href="{{influencer.x_handle}}">{{influencer.x_handle}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" style="min-width: 100px;">X Followers</th>
+                                    <td>
+                                        {{influencer.x_followers}}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="/influencer/profile/edit/{{influencer.id}}">
+                        <button class="btn btn-dark ms-2">Edit</button>
+                    </a>
+                </div>
+            </div>
+            <div class="right-scroll-box mt-4">
+                <!-- <div class="{% if campaigns|length == 0 %}d-none{% endif %}"> -->
+                <h3 style="margin-left: 5px;">
+                    Ad Requests
+                </h3>
+                <!-- </div> -->
+                <div class="row-like-cards-container">
+                    <!-- a horizontal row like box with text on left and two buttons on right -->
+                    {% for ad_request in ad_requests %}
+                    <div class="row-like-card">
+                        <div>
+                            <p class=" m-0">
+                                <span class="fw-semibold">{{ ad_request[0].name}}</span>
+                                with
+                                <span class="fw-semibold">{{ ad_request[2].name}}</span>
+                                {% if ad_request[0].status == AdRequestStatusEnum.Pending %}
+                                <span class="badge text-bg-secondary">Pending</span>
+                                {% elif ad_request[0].status == AdRequestStatusEnum.Accepted %}
+                                <span class="badge text-bg-success">Accepted</span>
+                                {% elif ad_request[0].status == AdRequestStatusEnum.Seen %}
+                                <span class="badge text-bg-primary">Seen</span>
+                                {% elif ad_request[0].status == AdRequestStatusEnum.Rejected %}
+                                <span class="badge text-bg-danger">Rejected</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="hz-btn-container">
+                            <a href="/influencer/ad_request/{{ad_request[0].id}}">
+                                <button class="btn btn-dark">View</button>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="create-new-campaign-container mt-4">
+                    <a href="/influencer/find">
+                        <div class="add-campaign-btn-group">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="75" height="75"
+                                viewBox="0 0 128 128">
+                                <path
+                                    d="M 64 6.0507812 C 49.15 6.0507812 34.3 11.7 23 23 C 0.4 45.6 0.4 82.4 23 105 C 34.3 116.3 49.2 122 64 122 C 78.8 122 93.7 116.3 105 105 C 127.6 82.4 127.6 45.6 105 23 C 93.7 11.7 78.85 6.0507812 64 6.0507812 z M 64 12 C 77.3 12 90.600781 17.099219 100.80078 27.199219 C 121.00078 47.499219 121.00078 80.500781 100.80078 100.80078 C 80.500781 121.10078 47.500781 121.10078 27.300781 100.80078 C 7.0007813 80.500781 6.9992188 47.499219 27.199219 27.199219 C 37.399219 17.099219 50.7 12 64 12 z M 64 42 C 62.3 42 61 43.3 61 45 L 61 61 L 45 61 C 43.3 61 42 62.3 42 64 C 42 65.7 43.3 67 45 67 L 61 67 L 61 83 C 61 84.7 62.3 86 64 86 C 65.7 86 67 84.7 67 83 L 67 67 L 83 67 C 84.7 67 86 65.7 86 64 C 86 62.3 84.7 61 83 61 L 67 61 L 67 45 C 67 43.3 65.7 42 64 42 z">
+                                </path>
+                            </svg>
+                            <p class="fw-bold text-center">Create New Ad Request</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- scripts -->

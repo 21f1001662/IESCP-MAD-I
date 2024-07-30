@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, StringField, IntegerField
+from wtforms import EmailField, PasswordField, StringField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, URL, Optional
 from src.influencer.models import Influencer
 
@@ -49,3 +49,18 @@ class InfluencerRegisterForm(FlaskForm):
 class CampaignSearchForm(FlaskForm):
     name = StringField("Name", validators=[Optional()])
     budget = IntegerField("Budget", validators=[Optional()])
+    
+class AdRequestForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    budget = IntegerField("Budget", validators=[DataRequired()])
+    message = TextAreaField("Message", validators=[DataRequired()])
+    campaign = IntegerField("Campaign", validators=[DataRequired(message="Campaign is required")])
+    
+    def validate(self, extra_validators=None):
+        initial_validation = super(AdRequestForm, self).validate(extra_validators)
+        if not initial_validation:
+            return False
+        if self.budget.data <= 0:
+            self.budget.errors.append("Budget must be greater than 0")
+            return False
+        return True
