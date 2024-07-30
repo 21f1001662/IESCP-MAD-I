@@ -7,11 +7,31 @@ from src.influencer.models import Influencer
 
 influencer_bp = Blueprint("influencer", __name__)
 
-
 @influencer_bp.route("/dashboard")
 def dashboard():
     if current_user.is_authenticated and session.get("role") == "influencer":
         return render_template("influencer/dashboard.html")
+    else:
+        return redirect(url_for("influencer.login"))
+    
+@influencer_bp.route("/requests")
+def requests():
+    if current_user.is_authenticated and session.get("role") == "influencer":
+        return render_template("influencer/requests.html")
+    else:
+        return redirect(url_for("influencer.login"))
+
+@influencer_bp.route("/find")
+def find():
+    if current_user.is_authenticated and session.get("role") == "influencer":
+        return render_template("influencer/find.html")
+    else:
+        return redirect(url_for("influencer.login"))
+
+@influencer_bp.route("/stats")
+def stats():
+    if current_user.is_authenticated and session.get("role") == "influencer":
+        return render_template("influencer/stats.html")
     else:
         return redirect(url_for("influencer.login"))
 

@@ -10,11 +10,14 @@
             <div class="d-flex flex-grow-1">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {% if 'influencer.dashboard' in request.endpoint %}active fw-bold{% endif %}" aria-current="page" href="{{ url_for('influencer.dashboard') }}">Profile</a>
+                        <a class="nav-link {% if 'influencer.dashboard' in request.endpoint %}active fw-bold{% endif %}" aria-current="page" href="{{ url_for('influencer.dashboard') }}">Dashboard</a>
+                    </li>|
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'influencer.requests' in request.endpoint %}active fw-bold{% endif %}" aria-disabled="true" href="{{ url_for('influencer.requests') }}">Ad Requests</a>
                     </li>|
                     <li class="nav-item">
                         <a class="nav-link {% if 'influencer.find' in request.endpoint %}active fw-bold{% endif %}" aria-disabled="true" href="{{ url_for('influencer.find') }}">Find</a>
-                    </li>|
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link {% if 'influencer.stats' in request.endpoint %}active fw-bold{% endif %}" aria-disabled="true" href="{{ url_for('influencer.stats') }}">Stats</a>
                     </li>
