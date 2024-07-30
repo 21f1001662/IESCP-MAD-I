@@ -5,7 +5,7 @@ from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm, In
 from src import bcrypt, db
 from src.sponsor.models import Sponsor, Campaigns
 from src.influencer.models import Influencer
-from src.core.models import Message, AdRequest, AdRequestStatusEnum
+from src.core.models import Message, AdRequest, AdRequestStatusEnum, AdRequestSenderEnum
 
 sponsor_bp = Blueprint("sponsor", __name__)
 
@@ -217,7 +217,8 @@ def create_ad_request(influencer_id):
                 budget=form.budget.data,
                 campaign=form.campaign.data,
                 sponsor=current_user.id,
-                influencer=influencer.id
+                influencer=influencer.id,
+                sender=AdRequestSenderEnum.Sponsor
             )
             db.session.add(ad_request)
             db.session.commit()

@@ -52,13 +52,14 @@ class AdRequest(UserMixin, db.Model):
     influencer = db.Column(db.Integer, db.ForeignKey('influencers.id'))
     created_at = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, name, budget, campaign, sponsor, influencer):
+    def __init__(self, name, budget, campaign, sponsor, influencer, sender):
         self.name = name
         self.status = AdRequestStatusEnum.Pending
         self.budget = budget
         self.campaign = campaign
         self.sponsor = sponsor
         self.influencer = influencer
+        self.sender = sender
         self.created_at = datetime.now()
         
     def __repr__(self):

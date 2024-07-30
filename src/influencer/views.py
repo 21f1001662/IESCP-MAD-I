@@ -107,6 +107,7 @@ def create_ad_request(campaign_id):
                 campaign=form.campaign.data,
                 sponsor=campaign.created_by,
                 influencer=current_user.id,
+                sender=AdRequestSenderEnum.Influencer
             )
             db.session.add(ad_request)
             db.session.commit()
