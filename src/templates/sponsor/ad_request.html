@@ -40,8 +40,8 @@
                     <span class="badge text-bg-secondary ms-2 align-middle">Pending</span>
                     {% elif ad_request.status == AdRequestStatusEnum.Accepted %}
                     <span class="badge text-bg-success ms-2 align-middle">Accepted</span>
-                    {% elif ad_request.status == AdRequestStatusEnum.Seen %}
-                    <span class="badge text-bg-primary ms-2 align-middle">Seen</span>
+                    {% elif ad_request.status == AdRequestStatusEnum.Completed %}
+                    <span class="badge text-bg-primary ms-2 align-middle">Completed</span>
                     {% elif ad_request.status == AdRequestStatusEnum.Rejected %}
                     <span class="badge text-bg-danger ms-2 align-middle">Rejected</span>
                     {% endif %}

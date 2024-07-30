@@ -10,9 +10,9 @@ class MessageVisibilityEnum(enum.Enum):
 
 class AdRequestStatusEnum(enum.Enum):
     Pending = "Pending"
-    Seen = "Seen"
     Accepted = "Accepted"
     Rejected = "Rejected"
+    Completed = "Completed"
 
 class AdRequestSenderEnum(enum.Enum):
     Sponsor = "Sponsor"

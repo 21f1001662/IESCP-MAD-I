@@ -99,8 +99,8 @@
                                 <span class="badge text-bg-secondary">Pending</span>
                                 {% elif ad_request[0].status == AdRequestStatusEnum.Accepted %}
                                 <span class="badge text-bg-success">Accepted</span>
-                                {% elif ad_request[0].status == AdRequestStatusEnum.Seen %}
-                                <span class="badge text-bg-primary">Seen</span>
+                                {% elif ad_request[0].status == AdRequestStatusEnum.Completed %}
+                                <span class="badge text-bg-primary">Completed</span>
                                 {% elif ad_request[0].status == AdRequestStatusEnum.Rejected %}
                                 <span class="badge text-bg-danger">Rejected</span>
                                 {% endif %}
