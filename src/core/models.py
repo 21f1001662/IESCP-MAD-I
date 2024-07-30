@@ -14,6 +14,10 @@ class AdRequestStatusEnum(enum.Enum):
     Accepted = "Accepted"
     Rejected = "Rejected"
 
+class AdRequestSenderEnum(enum.Enum):
+    Sponsor = "Sponsor"
+    Influencer = "Influencer"
+
 class Message(UserMixin, db.Model):
     __tablename__ = "messages"
 
@@ -44,6 +48,7 @@ class AdRequest(UserMixin, db.Model):
     budget = db.Column(db.Integer, nullable=False)
     campaign = db.Column(db.Integer, db.ForeignKey('campaigns.id'))
     sponsor = db.Column(db.Integer, db.ForeignKey('sponsors.id'))
+    sender = db.Column(Enum(AdRequestSenderEnum), nullable=False, default=AdRequestSenderEnum.Sponsor)
     influencer = db.Column(db.Integer, db.ForeignKey('influencers.id'))
     created_at = db.Column(db.DateTime, nullable=False)
 

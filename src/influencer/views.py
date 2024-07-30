@@ -5,14 +5,23 @@ from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchFo
 from src import bcrypt, db
 from src.influencer.models import Influencer
 from src.sponsor.models import Campaigns, Sponsor
-from src.core.models import AdRequest, AdRequestStatusEnum, Message
+from src.core.models import AdRequest, AdRequestStatusEnum, AdRequestSenderEnum, Message
 
 influencer_bp = Blueprint("influencer", __name__)
 
 @influencer_bp.route("/dashboard")
 def dashboard():
     if current_user.is_authenticated and session.get("role") == "influencer":
-        return render_template("influencer/dashboard.html")
+        influencer = Influencer.query.get(current_user.id)
+        new_ad_requests = db.session.query(AdRequest, Campaigns, Sponsor)\
+            .join(Campaigns, AdRequest.campaign == Campaigns.id)\
+            .join(Sponsor, AdRequest.sponsor == Sponsor.id)\
+            .filter(AdRequest.influencer == influencer.id, AdRequest.sender == AdRequestSenderEnum.Sponsor, AdRequest.status == AdRequestStatusEnum.Pending).all()
+        active_ad_requests = db.session.query(AdRequest, Campaigns, Sponsor)\
+            .join(Campaigns, AdRequest.campaign == Campaigns.id)\
+            .join(Sponsor, AdRequest.sponsor == Sponsor.id)\
+            .filter(AdRequest.influencer == influencer.id, AdRequest.status == AdRequestStatusEnum.Accepted).all()
+        return render_template("influencer/dashboard.html", new_ad_requests=new_ad_requests, active_ad_requests=active_ad_requests, influencer=influencer, AdRequestStatusEnum=AdRequestStatusEnum, AdRequestSenderEnum=AdRequestSenderEnum)
     else:
         return redirect(url_for("influencer.login"))
     
