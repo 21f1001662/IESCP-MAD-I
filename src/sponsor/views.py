@@ -17,7 +17,7 @@ def dashboard():
         ad_requests = db.session.query(AdRequest, Sponsor, Influencer).\
             join(Sponsor, AdRequest.sponsor == Sponsor.id).\
             join(Influencer, AdRequest.influencer == Influencer.id).\
-            filter(AdRequest.sponsor == sponsor.id, AdRequest.sender == AdRequestSenderEnum.Sponsor, AdRequest.status == AdRequestStatusEnum.Pending).all()
+            filter(AdRequest.sponsor == sponsor.id, AdRequest.sender == AdRequestSenderEnum.Influencer, AdRequest.status == AdRequestStatusEnum.Pending).all()
         
         return render_template("sponsor/dashboard.html", campaigns=campaigns, ad_requests=ad_requests, sponsor=sponsor, AdRequestStatusEnum=AdRequestStatusEnum)
     

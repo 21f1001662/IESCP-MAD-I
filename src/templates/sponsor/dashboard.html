@@ -86,6 +86,11 @@
                     New Ad Requests
                 </h3>
                 <!-- </div> -->
+                {% if ad_requests|length == 0 %}
+                <div class="text-center">
+                    <p>No new ad requests</p>
+                </div>
+                {% endif %}
                 <div class="row-like-cards-container">
                     <!-- a horizontal row like box with text on left and two buttons on right -->
                     {% for ad_request in ad_requests %}
@@ -107,9 +112,15 @@
                             </p>
                         </div>
                         <div class="hz-btn-container">
-                            <a href="/sponsor/ad_request/{{ad_request[0].id}}">
-                                <button class="btn btn-dark">View</button>
-                            </a>
+                            <form role="form" method="post" action="/sponsor/ad_request/response">
+                                <input hidden name="ad_request_id" value="{{ad_request[0].id}}">
+                                <button class="btn btn-md btn-success me-1" name="response" value="Accepted"
+                                    type="submit">Accept</button>
+                                <a href="/sponsor/ad_request/{{ad_request[0].id}}"
+                                    class="btn btn-dark me-1">Negotiate</a>
+                                <button class="btn btn-md btn-danger" name="response" value="Rejected"
+                                    type="submit">Reject</button>
+                            </form>
                         </div>
                     </div>
                     {% endfor %}
@@ -121,6 +132,11 @@
                     Active Campaigns
                 </h3>
                 <!-- </div> -->
+                {% if campaigns|length == 0 %}
+                <div class="text-center">
+                    <p>No new Campaigns</p>
+                </div>
+                {% endif %}
                 <div class="row-like-cards-container">
                     <!-- a horizontal row like box with text on left and two buttons on right -->
                     {% for campaign in campaigns %}
