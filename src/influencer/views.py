@@ -1,6 +1,6 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchForm, AdRequestForm, AdRequestUpdateForm
+from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchForm, AdRequestForm, AdRequestUpdateForm, AdRequestResponseForm
 
 from src import bcrypt, db
 from src.influencer.models import Influencer
@@ -90,7 +90,7 @@ def ad_request(ad_request_id):
         form.budget.data = ad_request.budget
         form.campaign.data = ad_request.campaign
         
-        return render_template("influencer/ad_request.html", form=form, ad_request=ad_request, influencer=influencer, messages=messages, campaign=campaign, AdRequestStatusEnum=AdRequestStatusEnum)
+        return render_template("influencer/ad_request.html", form=form, ad_request=ad_request, influencer=influencer, messages=messages, campaign=campaign, AdRequestStatusEnum=AdRequestStatusEnum, AdRequestSenderEnum=AdRequestSenderEnum)
     else:
         return redirect(url_for("influencer.login"))
     
@@ -114,6 +114,23 @@ def create_ad_request(campaign_id):
             flash("Ad request created successfully.", "success")
             return redirect(url_for("influencer.requests"))
         return render_template("influencer/ad_request_form.html", campaign=campaign, campaign_id = campaign_id, form=form)
+    else:
+        return redirect(url_for("influencer.login"))
+
+@influencer_bp.route("/ad_request/response", methods=["POST"])
+def respond_to_ad_request():
+    if current_user.is_authenticated and session.get("role") == "influencer":
+        form = AdRequestResponseForm(request.form)
+        if form.validate_on_submit():
+            ad_request = AdRequest.query.filter_by(id=form.ad_request_id.data).first()
+            if ad_request.influencer != current_user.id:
+                flash("You are not authorized to respond to this ad request.", "danger")
+                return redirect(url_for("influencer.requests"))
+            
+            ad_request.status = form.response.data
+            db.session.commit()
+            flash(f"Ad request {ad_request.status.value} successfully.", "success")
+            return redirect(url_for("influencer.ad_request", ad_request_id=ad_request.id))
     else:
         return redirect(url_for("influencer.login"))
 

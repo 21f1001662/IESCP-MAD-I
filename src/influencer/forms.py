@@ -79,3 +79,7 @@ class AdRequestUpdateForm(FlaskForm):
             self.budget.errors.append("Budget must be greater than 0")
             return False
         return True
+
+class AdRequestResponseForm(FlaskForm):
+    ad_request_id = IntegerField("Ad Request ID", validators=[DataRequired()])
+    response = StringField("Response", validators=[DataRequired()])

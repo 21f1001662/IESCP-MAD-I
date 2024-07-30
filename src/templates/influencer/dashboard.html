@@ -80,7 +80,7 @@
                                     </td>
                                 </tr>
                                 {% endif %}
-                        
+
                                 <!-- youtube -->
                                 {% if influencer.youtube_handle and influencer.youtube_subscribers %}
                                 <tr>
@@ -96,7 +96,7 @@
                                     </td>
                                 </tr>
                                 {% endif %}
-                        
+
                                 {% if influencer.facebook_handle and influencer.facebook_followers %}
                                 <tr>
                                     <th scope="row" style="min-width: 100px;">Facebook Handle</th>
@@ -111,7 +111,7 @@
                                     </td>
                                 </tr>
                                 {% endif %}
-                        
+
                                 {% if influencer.x_handle and influencer.x_followers %}
                                 <tr>
                                     <th scope="row" style="min-width: 100px;">X Handle</th>
@@ -163,15 +163,16 @@
                             </p>
                         </div>
                         <div class="hz-btn-container">
-                            <a href="/sponsor/ad_request/{{ad_request[0].id}}">
-                                <button class="btn btn-success me-2">Accept</button>
-                            </a>
-                            <a href="/influencer/ad_request/{{ad_request[0].id}}">
-                                <button class="btn btn-dark me-2">Negotiate</button>
-                            </a>
-                            <a href="/sponsor/ad_request/{{ad_request[0].id}}">
-                                <button class="btn btn-danger ">Reject</button>
-                            </a>
+                            <form role="form" method="post" action="/influencer/ad_request/response">
+                                <input hidden name="ad_request_id" value="{{ad_request[0].id}}">
+                                <button class="btn btn-md btn-success me-1" name="response" value="Accepted"
+                                    type="submit">Accept</button>
+                                <a href="/influencer/ad_request/{{ad_request[0].id}}">
+                                    <button class="btn btn-dark me-1">Negotiate</button>
+                                </a>
+                                <button class="btn btn-md btn-danger" name="response" value="Rejected"
+                                    type="submit">Reject</button>
+                            </form>
                         </div>
                     </div>
                     {% endfor %}
