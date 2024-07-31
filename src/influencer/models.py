@@ -13,6 +13,7 @@ class Influencer(UserMixin, db.Model): #UserMixin is a class that includes defau
     created_on = db.Column(db.DateTime, nullable=False)
     role = db.Column(db.String, nullable=False, default="influencer")
     name = db.Column(db.String, nullable=False)
+    about = db.Column(db.String, nullable=True)
     category = db.Column(db.String, nullable=False)
     niche = db.Column(db.String, nullable=False)
     instagram_handle = db.Column(db.String, nullable=True)
@@ -24,12 +25,13 @@ class Influencer(UserMixin, db.Model): #UserMixin is a class that includes defau
     facebook_handle = db.Column(db.String, nullable=True)
     facebook_followers = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, email, password, name, category, niche, instagram_handle, instagram_followers, x_handle, x_followers, youtube_handle, youtube_subscribers, facebook_handle, facebook_followers):
+    def __init__(self, email, password, name, about, category, niche, instagram_handle, instagram_followers, x_handle, x_followers, youtube_handle, youtube_subscribers, facebook_handle, facebook_followers):
         self.email = email
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
         self.created_on = datetime.now()
         self.role = "influencer"
         self.name = name
+        self.about = about
         self.category = category
         self.niche = niche
         self.instagram_handle = instagram_handle

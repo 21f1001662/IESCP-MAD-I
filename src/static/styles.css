@@ -166,6 +166,10 @@ a {
     width: 100%; /* Full width when stacked */
     height: auto; /* Adjust height when stacked */
   }
+
+  .negotiate-btn{
+    margin: 10px 0;
+  }
 }
 
 .table tbody tr:last-child th,

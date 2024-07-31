@@ -22,6 +22,7 @@ class InfluencerRegisterForm(FlaskForm):
         ],
     )
     name = StringField("Name", validators=[DataRequired()])
+    about = TextAreaField("About", validators=[DataRequired()])
     category = StringField("Category", validators=[DataRequired()])
     niche = StringField("Niche", validators=[DataRequired()])
     instagram_handle = StringField("Instagram Handle", validators=[Optional(), URL()])

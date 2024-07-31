@@ -48,8 +48,7 @@
                         <img src="{{url_for('static', filename='images/girl_influencer.jpeg')}}" style="width: 180px"
                             alt="Campaign Image" class="rounded-circle">
                         <h3>{{influencer.name}}</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero quisquam aperiam amet veniam
-                            neque possimus Accusamus esse optio eligendi!</p>
+                        <p>{{influencer.about}}</p>
                     </div>
                 </div>
                 <div>
@@ -149,7 +148,7 @@
                         <div>
                             <p class=" m-0">
                                 <span class="fw-semibold">{{ ad_request[0].name}}</span>
-                                with
+                                for
                                 <span class="fw-semibold">{{ ad_request[2].name}}</span>
                                 {% if ad_request[0].status == AdRequestStatusEnum.Pending %}
                                 <span class="badge text-bg-secondary">Pending</span>

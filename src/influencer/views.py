@@ -168,6 +168,7 @@ def register():
             email=form.email.data, 
             password=form.password.data,
             name=form.name.data,
+            about=form.about.data,
             category=form.category.data,
             niche=form.niche.data,
             x_handle=form.x_handle.data,
