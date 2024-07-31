@@ -265,6 +265,7 @@ def register():
             email=form.email.data, 
             password=form.password.data,
             name=form.name.data,
+            about=form.about.data,
             industry=form.industry.data,
             budget=form.budget.data
         )

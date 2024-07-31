@@ -70,6 +70,17 @@
               {% endif %}
             </div>
             <div class="form-floating">
+              {{ form.about(placeholder="About", class="form-control mb-2") }}
+              {{ form.about.label }}
+              {% if form.about.errors %}
+              {% for error in form.about.errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ error }}
+              </div>
+              {% endfor %}
+              {% endif %}
+            </div>
+            <div class="form-floating">
               {{ form.email(placeholder="email", class="form-control mb-2") }}
               {{ form.email.label }}
               {% if form.email.errors %}

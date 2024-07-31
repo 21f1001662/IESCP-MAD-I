@@ -22,6 +22,7 @@ class SponsorRegisterForm(FlaskForm):
         ],
     )
     name = StringField("Name", validators=[DataRequired()])
+    about = TextAreaField("About", validators=[DataRequired()])
     industry = StringField("Industry", validators=[DataRequired()])
     budget = IntegerField("Budget", validators=[DataRequired()])
     
