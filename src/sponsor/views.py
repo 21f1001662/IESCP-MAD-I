@@ -1,6 +1,9 @@
-from flask import session, Blueprint, render_template, request, flash, redirect, url_for
+from flask import session, Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_login import login_user, logout_user, current_user, login_required
 from .forms import SponsorLoginForm, SponsorRegisterForm, CreateCampaignForm, InfluencerSearchForm, AdRequestForm, AdRequestUpdateForm, AdRequestResponseForm
+import os
+from werkzeug.utils import secure_filename
+import time
 
 from src import bcrypt, db
 from src.sponsor.models import Sponsor, Campaigns
@@ -261,11 +264,20 @@ def register():
         return redirect(url_for("sponsor.dashboard"))
     form = SponsorRegisterForm(request.form)
     if form.validate_on_submit():
+        # Handle file upload
+        image_file = request.files.get("image")
+        filename = None
+        if image_file:
+            filename = secure_filename(image_file.filename)
+            filename = f"{int(time.time())}_{filename}"
+            upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(upload_path)
         sponsor = Sponsor(
             email=form.email.data, 
             password=form.password.data,
             name=form.name.data,
             about=form.about.data,
+            image=filename,
             industry=form.industry.data,
             budget=form.budget.data
         )

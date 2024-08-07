@@ -24,6 +24,9 @@ class SponsorRegisterForm(FlaskForm):
     )
     name = StringField("Name", validators=[DataRequired()])
     about = TextAreaField("About", validators=[DataRequired()])
+    image = FileField(
+        "Profile Image", validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')]
+    )
     industry = StringField("Industry", validators=[DataRequired()])
     budget = IntegerField("Budget", validators=[DataRequired()])
     

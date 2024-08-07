@@ -16,18 +16,20 @@ class Sponsor(UserMixin, db.Model): #UserMixin is a class that includes default 
     password = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
     about = db.Column(db.String, nullable=True)
+    image = db.Column(db.String, nullable=True)
     created_on = db.Column(db.DateTime, nullable=False)
     role = db.Column(db.String, nullable=False, default="sponsor")
     industry = db.Column(db.String, nullable=False)
     budget = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, email, password, name, about, industry, budget):
+    def __init__(self, email, password, name, about, image, industry, budget):
         self.email = email
         self.password = bcrypt.generate_password_hash(password).decode('utf8')
         self.created_on = datetime.now()
         self.role = "sponsor"
         self.name = name
         self.about = about
+        self.image = image
         self.industry = industry
         self.budget = budget
 
