@@ -54,8 +54,13 @@
                                 <tr>
                                     <th scope="row" style="min-width: 100px;">
                                         <div class="text-center mb-4">
+                                            {% if influencer.image %}
+                                            <img src="{{ url_for('static', filename='uploads/' + influencer.image) }}"
+                                                alt="Campaign Image" class="profile-img" onclick="openFullscreen(this)">
+                                            {% else %}
                                             <img src="{{url_for('static', filename='images/girl_influencer.jpeg')}}"
-                                                style="width: 150px" alt="Influencer Image" class="rounded-circle">
+                                                style="width: 180px" alt="Campaign Image" class="rounded-circle">
+                                            {% endif %}
                                         </div>
                                     </th>
                                     <td style="vertical-align: bottom;">
@@ -303,6 +308,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
+    <script>
+        function openFullscreen(img) {
+            const fullscreenDiv = document.createElement('div');
+            fullscreenDiv.style.position = 'fixed';
+            fullscreenDiv.style.top = '0';
+            fullscreenDiv.style.left = '0';
+            fullscreenDiv.style.width = '100%';
+            fullscreenDiv.style.height = '100%';
+            fullscreenDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+            fullscreenDiv.style.display = 'flex';
+            fullscreenDiv.style.alignItems = 'center';
+            fullscreenDiv.style.justifyContent = 'center';
+            fullscreenDiv.style.zIndex = '1000';
+            fullscreenDiv.onclick = () => document.body.removeChild(fullscreenDiv);
+
+            const fullImg = document.createElement('img');
+            fullImg.src = img.src;
+            fullImg.style.maxWidth = '100%';
+            fullImg.style.maxHeight = '100%';
+
+            fullscreenDiv.appendChild(fullImg);
+            document.body.appendChild(fullscreenDiv);
+        }
+    </script>
     {% block js %}{% endblock %}
 
 </body>

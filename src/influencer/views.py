@@ -1,6 +1,9 @@
-from flask import session, Blueprint, render_template, request, flash, redirect, url_for
+from flask import session, Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_login import login_user, logout_user, current_user, login_required
 from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchForm, AdRequestForm, AdRequestUpdateForm, AdRequestResponseForm
+import os
+from werkzeug.utils import secure_filename
+import time
 
 from src import bcrypt, db
 from src.influencer.models import Influencer
@@ -163,12 +166,20 @@ def register():
         return redirect(url_for("influencer.dashboard"))
     form = InfluencerRegisterForm(request.form)
     if form.validate_on_submit():
-        print("form validated")
+        # Handle file upload
+        image_file = request.files.get("image")
+        filename = None
+        if image_file:
+            filename = secure_filename(image_file.filename)
+            filename = f"{int(time.time())}_{filename}"
+            upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(upload_path)
         influencer = Influencer(
             email=form.email.data, 
             password=form.password.data,
             name=form.name.data,
             about=form.about.data,
+            image=filename,
             category=form.category.data,
             niche=form.niche.data,
             x_handle=form.x_handle.data,

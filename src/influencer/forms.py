@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import EmailField, PasswordField, StringField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, URL, Optional
 from src.influencer.models import Influencer
@@ -23,6 +24,9 @@ class InfluencerRegisterForm(FlaskForm):
     )
     name = StringField("Name", validators=[DataRequired()])
     about = TextAreaField("About", validators=[DataRequired()])
+    image = FileField(
+        "Profile Image", validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')]
+    )
     category = StringField("Category", validators=[DataRequired()])
     niche = StringField("Niche", validators=[DataRequired()])
     instagram_handle = StringField("Instagram Handle", validators=[Optional(), URL()])

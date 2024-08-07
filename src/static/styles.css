@@ -287,3 +287,11 @@ a {
   overflow-wrap: break-word; /* Newer standard for breaking long words */
   word-break: break-all; /* Breaks long words */
 }
+
+.profile-img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
+  cursor: pointer; /* Indicate the image is clickable */
+}
