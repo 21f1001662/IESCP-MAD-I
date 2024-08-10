@@ -106,6 +106,16 @@ def unflag_ad_request(ad_request_id):
     else:
         return redirect(url_for("admin.login"))
 
+@admin_bp.route("/sponsor/<int:sponsor_id>", methods=["GET"])
+def sponsor_details(sponsor_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        sponsor_id = request.view_args["sponsor_id"]
+        sponsor = Sponsor.query.filter_by(id=sponsor_id).first()
+        
+        return render_template("admin/sponsor_profile.html", sponsor=sponsor)
+    else:
+        return redirect(url_for("admin.login"))
+
 @admin_bp.route("/flag/sponsor/<int:sponsor_id>", methods=["GET"])
 def flag_sponsor(sponsor_id):
     if current_user.is_authenticated and session.get("role") == "admin":
@@ -114,7 +124,7 @@ def flag_sponsor(sponsor_id):
         sponsor.flagged = True
         db.session.commit()
         flash("Sponsor flagged.", "info")
-        return redirect(url_for("admin.find"))
+        return redirect(url_for("admin.sponsor_details", sponsor_id=sponsor_id))
     else:
         return redirect(url_for("admin.login"))
 
@@ -126,7 +136,7 @@ def unflag_sponsor(sponsor_id):
         sponsor.flagged = False
         db.session.commit()
         flash("Sponsor unflagged.", "info")
-        return redirect(url_for("admin.find"))
+        return redirect(url_for("admin.sponsor_details", sponsor_id=sponsor_id))
     else:
         return redirect(url_for("admin.login"))
 
