@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms import EmailField, PasswordField, StringField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
 from src.admin.models import Admin
 
 class AdminLoginForm(FlaskForm):
@@ -34,3 +34,6 @@ class AdminRegisterForm(FlaskForm):
             self.password.errors.append("Passwords must match")
             return False
         return True
+
+class SearchForm(FlaskForm):
+    name = StringField("Name", validators=[Optional()])

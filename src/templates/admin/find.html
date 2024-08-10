@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Find Influencers</title>
+    <title>Find</title>
     <!-- meta -->
     <meta name="description" content="">
     <meta name="author" content="">
@@ -17,7 +17,7 @@
 </head>
 
 <body>
-    {% include "sponsor/navbar.html" %}
+    {% include "admin/navbar.html" %}
     <div class="container">
         <!-- messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -39,75 +39,159 @@
         {% endif %}
         {% endwith %}
 
-        <div class="two-row-layout-container">
-            <div class="left-sticky-box p-4">
-                <!-- left sticky box content -->
-                <div>
-                    <h3 class="" style="margin-left: 5px;">
-                        Find Influencers
-                    </h3>
-                    <form role="form" method="post" action="">
-                        {{ form.csrf_token }}
-
-                        <!-- two column table stuctute -->
-                        <table class="w-100">
-                            <tr>
-                                <td>
-                                    Name
-                                </td>
-                                <td>
-                                    <input type="text" id="name" value="{{ form.data.name | default('', true)}}"
-                                        name="name" class="form-control" placeholder="Enter name ...">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Industry
-                                </td>
-                                <td>
-                                    <input type="text" id="category" value="{{form.data.category | default('', true)}}"
-                                        name="category" class="form-control" placeholder="Enter category ...">
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="text-center mt-2">
-                            <button class="btn btn-md btn-dark" type="submit">Find !</button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-            <div class="right-scroll-box mt-4">
-                <!-- <div class="{% if campaigns|length == 0 %}d-none{% endif %}"> -->
+        <div class="right-scroll-box mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-2 mt-2">
                 <h3 style="margin-left: 5px;">
-                    Search Results
+                    Campaigns/Users
                 </h3>
-                <!-- </div> -->
-                <div class="row-like-cards-container">
-                    <!-- a horizontal row like box with text on left and two buttons on right -->
-                    {% for influencer in influencers %}
-                    <div class="row-like-card">
-                        <div>
-                            <p class="fw-bold m-0">{{influencer.name}} | {{influencer.category}} | {{influencer.niche}}
-                                <!-- <span class="badge text-bg-primary">Accepted</span>  -->
-                            </p>
-                        </div>
-                        <div class="hz-btn-container">
-                            {% if campaign_id %}
-                            <a href="/sponsor/ad_request/create/{{influencer.id}}?campaign_id={{campaign_id}}">
-                                <button class="btn btn-dark">Create Ad Request</button>
-                            </a>
-                            {% else %}
-                            <a href="/sponsor/ad_request/create/{{influencer.id}}">
-                                <button class="btn btn-dark">Create Ad Request</button>
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
+            
+                <form role="form" method="post" action="" class="d-flex">
+                    {{ form.csrf_token }}
+            
+                    <input type="text" id="name" value="{{ form.data.name | default('', true)}}" name="name"
+                        class="form-control me-2" placeholder="Campaign, Influencer, Sponsor name">
+                    <button class="btn btn-md btn-dark" type="submit">Find</button>
+                </form>
             </div>
+            
+            <!-- Campaigns -->
+            <div class="row-like-cards-container">
+                <!-- a horizontal row like box with text on left and two buttons on right -->
+                {% for campaign in campaigns %}
+                <div class="row-like-card">
+                    <div>
+                        <p class=" m-0">
+                            <span class="fw-semibold"><span class="badge text-bg-dark">Campaign</span> {{
+                                campaign.name}}
+                                {% if campaign.flagged %}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="red"
+                                    style="width: 1em; height: 1em; position: relative;">
+                                    <title>Be Aware! This campaign doesn't follow IESCP guidelines.</title>
+                                    <path fill-rule="evenodd"
+                                        d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                                        clip-rule="evenodd" />
+                                    <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+                                        style="display:none;" class="tooltip">Be Aware! This campaign doesn't follow
+                                        IESCP
+                                        guidelines.</text>
+                                </svg>
+                                {% endif %}
+                            </span>
+                            |
+                            <span class="fw-semibold">{{ campaign.description | trim_heading }}</span>
+                        </p>
+                    </div>
+                    <div class="hz-btn-container">
+                        {% if campaign.flagged %}
+                        <a href="/admin/unflag/campaigns/{{campaign.id}}">
+                            <button class="btn btn-success me-2">Unflag</button>
+                        </a>
+                        {% else %}
+                        <a href="/admin/flag/campaigns/{{campaign.id}}">
+                            <button class="btn btn-danger me-2">Flag</button>
+                        </a>
+                        {% endif %}
+
+                        <a href="/admin/campaigns/{{campaign.id}}">
+                            <button class="btn btn-dark">View</button>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Sponsors -->
+            <div class="row-like-cards-container">
+                <!-- a horizontal row like box with text on left and two buttons on right -->
+                {% for sponsor in sponsors %}
+                <div class="row-like-card">
+                    <div>
+                        <p class=" m-0">
+                            <span class="fw-semibold"><span class="badge text-bg-info">Sponsor</span> {{ sponsor.name}}
+                                {% if sponsor.flagged %}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="red"
+                                    style="width: 1em; height: 1em; position: relative;">
+                                    <title>Be Aware! This sponsor doesn't follow IESCP guidelines.</title>
+                                    <path fill-rule="evenodd"
+                                        d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                                        clip-rule="evenodd" />
+                                    <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+                                        style="display:none;" class="tooltip">Be Aware! This sponsor doesn't follow
+                                        IESCP
+                                        guidelines.</text>
+                                </svg>
+                                {% endif %}
+                            </span>
+                            |
+                            <span class="fw-semibold">{{ sponsor.about | trim_heading }}</span>
+                        </p>
+                    </div>
+                    <div class="hz-btn-container">
+                        {% if sponsor.flagged %}
+                        <a href="/admin/unflag/sponsor/{{sponsor.id}}">
+                            <button class="btn btn-success me-2">Unflag</button>
+                        </a>
+                        {% else %}
+                        <a href="/admin/flag/sponsor/{{sponsor.id}}">
+                            <button class="btn btn-danger me-2">Flag</button>
+                        </a>
+                        {% endif %}
+
+                        <a href="/admin/sponsor/{{sponsor.id}}">
+                            <button class="btn btn-dark">View</button>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Influencers -->
+            <div class="row-like-cards-container">
+                <!-- a horizontal row like box with text on left and two buttons on right -->
+                {% for influencer in influencers %}
+                <div class="row-like-card">
+                    <div>
+                        <p class=" m-0">
+                            <span class="fw-semibold"><span class="badge text-bg-warning">Influencer</span> {{
+                                influencer.name}}
+                                {% if influencer.flagged %}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="red"
+                                    style="width: 1em; height: 1em; position: relative;">
+                                    <title>Be Aware! This influencer doesn't follow IESCP guidelines.</title>
+                                    <path fill-rule="evenodd"
+                                        d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                                        clip-rule="evenodd" />
+                                    <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+                                        style="display:none;" class="tooltip">Be Aware! This influencer doesn't follow
+                                        IESCP
+                                        guidelines.</text>
+                                </svg>
+                                {% endif %}
+                            </span>
+                            |
+                            <span class="fw-semibold">{{ influencer.about | trim_heading }}</span>
+                        </p>
+                    </div>
+                    <div class="hz-btn-container">
+                        {% if influencer.flagged %}
+                        <a href="/admin/unflag/influencer/{{influencer.id}}">
+                            <button class="btn btn-success me-2">Unflag</button>
+                        </a>
+                        {% else %}
+                        <a href="/admin/flag/influencer/{{influencer.id}}">
+                            <button class="btn btn-danger me-2">Flag</button>
+                        </a>
+                        {% endif %}
+
+                        <a href="/admin/influencer/{{influencer.id}}">
+                            <button class="btn btn-dark">View</button>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
         </div>
+    </div>
     </div>
 
     <!-- scripts -->
@@ -116,6 +200,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
+    <script>
+        function openFullscreen(img) {
+            const fullscreenDiv = document.createElement('div');
+            fullscreenDiv.style.position = 'fixed';
+            fullscreenDiv.style.top = '0';
+            fullscreenDiv.style.left = '0';
+            fullscreenDiv.style.width = '100%';
+            fullscreenDiv.style.height = '100%';
+            fullscreenDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+            fullscreenDiv.style.display = 'flex';
+            fullscreenDiv.style.alignItems = 'center';
+            fullscreenDiv.style.justifyContent = 'center';
+            fullscreenDiv.style.zIndex = '1000';
+            fullscreenDiv.onclick = () => document.body.removeChild(fullscreenDiv);
+
+            const fullImg = document.createElement('img');
+            fullImg.src = img.src;
+            fullImg.style.maxWidth = '100%';
+            fullImg.style.maxHeight = '100%';
+
+            fullscreenDiv.appendChild(fullImg);
+            document.body.appendChild(fullscreenDiv);
+        }
+    </script>
     {% block js %}{% endblock %}
 
 </body>

@@ -1,6 +1,6 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import AdminLoginForm, AdminRegisterForm
+from .forms import AdminLoginForm, AdminRegisterForm, SearchForm
 from src.sponsor.forms import AdRequestUpdateForm
 import os
 
@@ -23,6 +23,26 @@ def dashboard():
         flagged_sponsors = Sponsor.query.filter_by(flagged=True).all()
         flagged_influencers = Influencer.query.filter_by(flagged=True).all()
         return render_template("admin/dashboard.html", campaigns=campaigns, flagged_campaigns=flagged_campaigns, flagged_sponsors=flagged_sponsors, flagged_influencers=flagged_influencers)
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/find", methods=["GET", "POST"])
+def find():
+    if current_user.is_authenticated and session.get("role") == "admin":
+        
+        form = SearchForm(request.form)
+        if form.validate_on_submit():
+            name = form.name.data
+            campaigns = Campaigns.query.filter(Campaigns.name.ilike(f"%{name}%")).all()
+            sponsors = Sponsor.query.filter(Sponsor.name.ilike(f"%{name}%")).all()
+            influencers = Influencer.query.filter(Influencer.name.ilike(f"%{name}%")).all()
+            return render_template("admin/find.html", campaigns=campaigns, sponsors=sponsors, influencers=influencers, form=form)
+        
+        campaigns = Campaigns.query.all()
+        sponsors = Sponsor.query.all()
+        influencers = Influencer.query.all()
+        
+        return render_template("admin/find.html", campaigns= campaigns, sponsors=sponsors, influencers=influencers, form=form)
     else:
         return redirect(url_for("admin.login"))
 
@@ -171,15 +191,6 @@ def unflag_influencer(influencer_id):
         db.session.commit()
         flash("Influencer unflagged.", "info")
         return redirect(url_for("admin.influencer_details", influencer_id=influencer_id))
-    else:
-        return redirect(url_for("admin.login"))
-    
-@admin_bp.route("/find")
-def find():
-    if current_user.is_authenticated and session.get("role") == "admin":
-        sponsors = Sponsor.query.all()
-        
-        return render_template("admin/find.html", sponsors=sponsors)
     else:
         return redirect(url_for("admin.login"))
 
