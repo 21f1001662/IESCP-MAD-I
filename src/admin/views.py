@@ -3,6 +3,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 from .forms import AdminLoginForm, AdminRegisterForm, SearchForm
 from src.sponsor.forms import AdRequestUpdateForm
 import os
+from datetime import datetime, timedelta
+from sqlalchemy import func
 
 from src import bcrypt, db
 from src.admin.models import Admin
@@ -284,7 +286,108 @@ def remove_sponsor(sponsor_id):
 @admin_bp.route("/stats")
 def stats():
     if current_user.is_authenticated and session.get("role") == "admin":
-        return render_template("admin/stats.html")
+        
+        stats = {}
+        ad_requests_count = AdRequest.query.count()
+        stats['ad_requests_count'] = ad_requests_count
+        
+        accepted_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Accepted).count()
+        rejected_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Rejected).count()
+        completed_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Completed).count()
+        stats['ad_request_stats'] = [accepted_request_count, rejected_request_count, completed_request_count]
+        
+        # return daily ad_requests groupby day sort ascending by date
+        daily_ad_requests = db.session.query(func.count(AdRequest.id), func.date(AdRequest.created_at)).group_by(func.date(AdRequest.created_at)).order_by(func.date(AdRequest.created_at)).all()
+        lables = []
+        values = []
+        cumulative = 0
+        # fill missing dates from the first date to the last date
+        if daily_ad_requests:
+            first_date = daily_ad_requests[0][1]
+            last_date = daily_ad_requests[-1][1]
+            date = first_date
+            while date <= last_date:
+                lables.append(date.strftime('%Y-%m-%d'))
+                for ad_request in daily_ad_requests:
+                    if ad_request[1] == date:
+                        cumulative += ad_request[0]
+                        values.append(cumulative)
+                        break
+                else:
+                    values.append(cumulative)
+                date += timedelta(days=1)
+        
+        stats['daily_ad_requests'] = {'labels': lables, 'values': values}
+        
+        daily_messages = db.session.query(func.count(Message.id), func.date(Message.sent_time)).group_by(func.date(Message.sent_time)).order_by(func.date(Message.sent_time)).all()
+        lables = []
+        values = []
+        cumulative = 0
+        # fill missing dates from the first date to the last date
+        if daily_messages:
+            first_date = daily_messages[0][1]
+            last_date = daily_messages[-1][1]
+            date = first_date
+            while date <= last_date:
+                lables.append(date.strftime('%Y-%m-%d'))
+                for message in daily_messages:
+                    if message[1] == date:
+                        cumulative += message[0]
+                        values.append(cumulative)
+                        break
+                else:
+                    values.append(cumulative)
+                date += timedelta(days=1)
+        
+        stats['daily_messages'] = {'labels': lables, 'values': values}
+        
+        daily_sponsors = db.session.query(func.count(Sponsor.id), func.date(Sponsor.created_on)).group_by(func.date(Sponsor.created_on)).order_by(func.date(Sponsor.created_on)).all()
+        lables = []
+        values = []
+        cumulative = 0
+        # fill missing dates from the first date to the last date
+        
+        if daily_sponsors:
+            first_date = daily_sponsors[0][1]
+            last_date = daily_sponsors[-1][1]
+            date = first_date
+            while date <= last_date:
+                lables.append(date.strftime('%Y-%m-%d'))
+                for sponsor in daily_sponsors:
+                    if sponsor[1] == date:
+                        cumulative += sponsor[0]
+                        values.append(cumulative)
+                        break
+                else:
+                    values.append(cumulative)
+                date += timedelta(days=1)
+        
+        stats['daily_sponsors'] = {'labels': lables, 'values': values}
+        
+        daily_influencers = db.session.query(func.count(Influencer.id), func.date(Influencer.created_on)).group_by(func.date(Influencer.created_on)).order_by(func.date(Influencer.created_on)).all()
+        lables = []
+        values = []
+        cumulative = 0
+        
+        if daily_influencers:
+            first_date = daily_influencers[0][1]
+            last_date = daily_influencers[-1][1]
+            date = first_date
+            while date <= last_date:
+                lables.append(date.strftime('%Y-%m-%d'))
+                for influencer in daily_influencers:
+                    if influencer[1] == date:
+                        cumulative += influencer[0]
+                        values.append(cumulative)
+                        break
+                else:
+                    values.append(cumulative)
+                date += timedelta(days=1)
+                
+        stats['daily_influencers'] = {'labels': lables, 'values': values}   
+        
+        print(stats)
+        return render_template("admin/stats.html", stats=stats)
     else:
         return redirect(url_for("admin.login"))
 
