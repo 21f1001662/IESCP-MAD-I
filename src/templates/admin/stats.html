@@ -134,11 +134,11 @@
         };
 
         const ad_request_status_data = {
-            labels: ['Rejected', 'Completed', 'Accepted'],
+            labels: ['Accepted', 'Rejected', 'Completed',  'Pending'],
             datasets: [{
                 data: stats.ad_request_stats,
-                backgroundColor: ['#FF6384', '#36A2EB', '#4CAF50'],
-                hoverBackgroundColor: ['#FF6384', '#36A2EB', '#4CAF50']
+                backgroundColor: ['#4CAF50', '#FF6384', '#36A2EB', 'yellow'],
+                hoverBackgroundColor: ['#4CAF50', '#FF6384', '#36A2EB', 'yellow']
             }]
         };
 

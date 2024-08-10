@@ -165,7 +165,8 @@ def stats():
         accepted_request_count = AdRequest.query.filter_by(influencer = current_user.id, status=AdRequestStatusEnum.Accepted).count()
         rejected_request_count = AdRequest.query.filter_by(influencer = current_user.id, status=AdRequestStatusEnum.Rejected).count()
         completed_request_count = AdRequest.query.filter_by(influencer = current_user.id, status=AdRequestStatusEnum.Completed).count()
-        stats['ad_request_stats'] = [accepted_request_count, rejected_request_count, completed_request_count]
+        pending_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Pending).count()
+        stats['ad_request_stats'] = [accepted_request_count, rejected_request_count, completed_request_count, pending_request_count]
         
         # return daily ad_requests groupby day sort ascending by date
         daily_ad_requests = db.session.query(func.count(AdRequest.id), func.date(AdRequest.created_at)).filter(AdRequest.influencer == current_user.id).group_by(func.date(AdRequest.created_at)).order_by(func.date(AdRequest.created_at)).all()
@@ -174,8 +175,8 @@ def stats():
         cumulative = 0
         # fill missing dates from the first date to the last date
         if daily_ad_requests:
-            first_date = daily_ad_requests[0][1]
-            last_date = daily_ad_requests[-1][1]
+            first_date = datetime.strptime(daily_ad_requests[0][1], '%Y-%m-%d')
+            last_date = datetime.strptime(daily_ad_requests[-1][1], '%Y-%m-%d')
             date = first_date
             while date <= last_date:
                 lables.append(date.strftime('%Y-%m-%d'))

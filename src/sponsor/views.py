@@ -58,11 +58,16 @@ def add_campaigns():
     if current_user.is_authenticated and session.get("role") == "sponsor":
         form = CreateCampaignForm(request.form)
         if form.validate_on_submit():
+            print(form.start_date.data)
+            print(form.end_date.data)
+            start_date = datetime.strptime(form.start_date.data, '%Y-%m-%d').date()
+            end_date = datetime.strptime(form.end_date.data, '%Y-%m-%d').date()
+
             campaign = Campaigns(
                 name=form.name.data,
                 description=form.description.data,
-                start_date=form.start_date.data,
-                end_date=form.end_date.data,
+                start_date=start_date,
+                end_date=end_date,
                 budget=form.budget.data,
                 visibility=form.visibility.data,
                 goals=form.goals.data,
@@ -148,7 +153,8 @@ def stats():
         accepted_request_count = AdRequest.query.filter_by(sponsor = current_user.id, status=AdRequestStatusEnum.Accepted).count()
         rejected_request_count = AdRequest.query.filter_by(sponsor = current_user.id, status=AdRequestStatusEnum.Rejected).count()
         completed_request_count = AdRequest.query.filter_by(sponsor = current_user.id, status=AdRequestStatusEnum.Completed).count()
-        stats['ad_request_stats'] = [accepted_request_count, rejected_request_count, completed_request_count]
+        pending_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Pending).count()
+        stats['ad_request_stats'] = [accepted_request_count, rejected_request_count, completed_request_count, pending_request_count]
         
         # return daily ad_requests groupby day sort ascending by date
         daily_ad_requests = db.session.query(func.count(AdRequest.id), func.date(AdRequest.created_at)).filter(AdRequest.sponsor == current_user.id).group_by(func.date(AdRequest.created_at)).order_by(func.date(AdRequest.created_at)).all()
@@ -157,8 +163,8 @@ def stats():
         cumulative = 0
         # fill missing dates from the first date to the last date
         if daily_ad_requests:
-            first_date = daily_ad_requests[0][1]
-            last_date = daily_ad_requests[-1][1]
+            first_date = datetime.strptime(daily_ad_requests[0][1], '%Y-%m-%d')
+            last_date = datetime.strptime(daily_ad_requests[-1][1], '%Y-%m-%d')
             date = first_date
             while date <= last_date:
                 lables.append(date.strftime('%Y-%m-%d'))

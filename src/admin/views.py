@@ -294,7 +294,8 @@ def stats():
         accepted_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Accepted).count()
         rejected_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Rejected).count()
         completed_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Completed).count()
-        stats['ad_request_stats'] = [accepted_request_count, rejected_request_count, completed_request_count]
+        pending_request_count = AdRequest.query.filter_by(status=AdRequestStatusEnum.Pending).count()
+        stats['ad_request_stats'] = [accepted_request_count, rejected_request_count, completed_request_count, pending_request_count]
         
         # return daily ad_requests groupby day sort ascending by date
         daily_ad_requests = db.session.query(func.count(AdRequest.id), func.date(AdRequest.created_at)).group_by(func.date(AdRequest.created_at)).order_by(func.date(AdRequest.created_at)).all()
@@ -303,8 +304,8 @@ def stats():
         cumulative = 0
         # fill missing dates from the first date to the last date
         if daily_ad_requests:
-            first_date = daily_ad_requests[0][1]
-            last_date = daily_ad_requests[-1][1]
+            first_date = datetime.strptime(daily_ad_requests[0][1], '%Y-%m-%d')
+            last_date = datetime.strptime(daily_ad_requests[-1][1], '%Y-%m-%d')
             date = first_date
             while date <= last_date:
                 lables.append(date.strftime('%Y-%m-%d'))
@@ -325,8 +326,8 @@ def stats():
         cumulative = 0
         # fill missing dates from the first date to the last date
         if daily_messages:
-            first_date = daily_messages[0][1]
-            last_date = daily_messages[-1][1]
+            first_date = datetime.strptime(daily_messages[0][1], '%Y-%m-%d')
+            last_date = datetime.strptime(daily_messages[-1][1], '%Y-%m-%d')
             date = first_date
             while date <= last_date:
                 lables.append(date.strftime('%Y-%m-%d'))
@@ -348,8 +349,8 @@ def stats():
         # fill missing dates from the first date to the last date
         
         if daily_sponsors:
-            first_date = daily_sponsors[0][1]
-            last_date = daily_sponsors[-1][1]
+            first_date = datetime.strptime(daily_sponsors[0][1], '%Y-%m-%d')
+            last_date = datetime.strptime(daily_sponsors[-1][1], '%Y-%m-%d')
             date = first_date
             while date <= last_date:
                 lables.append(date.strftime('%Y-%m-%d'))
@@ -370,8 +371,8 @@ def stats():
         cumulative = 0
         
         if daily_influencers:
-            first_date = daily_influencers[0][1]
-            last_date = daily_influencers[-1][1]
+            first_date = datetime.strptime(daily_influencers[0][1], '%Y-%m-%d')
+            last_date = datetime.strptime(daily_influencers[-1][1], '%Y-%m-%d')
             date = first_date
             while date <= last_date:
                 lables.append(date.strftime('%Y-%m-%d'))
@@ -386,6 +387,7 @@ def stats():
                 
         stats['daily_influencers'] = {'labels': lables, 'values': values}   
 
+        print(stats)
         return render_template("admin/stats.html", stats=stats)
     else:
         return redirect(url_for("admin.login"))
