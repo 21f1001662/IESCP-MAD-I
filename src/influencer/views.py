@@ -4,6 +4,8 @@ from .forms import InfluencerLoginForm, InfluencerRegisterForm, CampaignSearchFo
 import os
 from werkzeug.utils import secure_filename
 import time
+from datetime import datetime, timedelta
+from sqlalchemy import func
 
 from src import bcrypt, db
 from src.influencer.models import Influencer
@@ -155,9 +157,43 @@ def find():
 @influencer_bp.route("/stats")
 def stats():
     if current_user.is_authenticated and session.get("role") == "influencer":
-        return render_template("influencer/stats.html")
+        
+        stats = {}
+        ad_requests_count = AdRequest.query.count()
+        stats['ad_requests_count'] = ad_requests_count
+        
+        accepted_request_count = AdRequest.query.filter_by(influencer = current_user.id, status=AdRequestStatusEnum.Accepted).count()
+        rejected_request_count = AdRequest.query.filter_by(influencer = current_user.id, status=AdRequestStatusEnum.Rejected).count()
+        completed_request_count = AdRequest.query.filter_by(influencer = current_user.id, status=AdRequestStatusEnum.Completed).count()
+        stats['ad_request_stats'] = [accepted_request_count, rejected_request_count, completed_request_count]
+        
+        # return daily ad_requests groupby day sort ascending by date
+        daily_ad_requests = db.session.query(func.count(AdRequest.id), func.date(AdRequest.created_at)).filter(AdRequest.influencer == current_user.id).group_by(func.date(AdRequest.created_at)).order_by(func.date(AdRequest.created_at)).all()
+        lables = []
+        values = []
+        cumulative = 0
+        # fill missing dates from the first date to the last date
+        if daily_ad_requests:
+            first_date = daily_ad_requests[0][1]
+            last_date = daily_ad_requests[-1][1]
+            date = first_date
+            while date <= last_date:
+                lables.append(date.strftime('%Y-%m-%d'))
+                for ad_request in daily_ad_requests:
+                    if ad_request[1] == date:
+                        cumulative += ad_request[0]
+                        values.append(cumulative)
+                        break
+                else:
+                    values.append(cumulative)
+                date += timedelta(days=1)
+        
+        stats['daily_ad_requests'] = {'labels': lables, 'values': values}
+
+        return render_template("influencer/stats.html", stats=stats)
     else:
         return redirect(url_for("influencer.login"))
+
 
 @influencer_bp.route("/register", methods=["GET", "POST"])
 def register():

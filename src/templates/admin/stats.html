@@ -49,7 +49,7 @@
                     <div class="card-body">
                         <canvas id="chart4"></canvas>
                     </div>
-                    <h5 class="card-title text-center">Chart Title</h5>
+                    <h5 class="card-title text-center">Ad Requests status</h5>
                 </div>
             </div>
         </div>
@@ -173,7 +173,7 @@
         const ctx4 = document.getElementById('chart4').getContext('2d');
         const chart4 = new Chart(ctx4, {
             type: 'pie',
-            data: data,
+            data: ad_request_status_data,
             options: options
         });
 

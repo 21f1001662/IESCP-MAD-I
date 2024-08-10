@@ -385,8 +385,7 @@ def stats():
                 date += timedelta(days=1)
                 
         stats['daily_influencers'] = {'labels': lables, 'values': values}   
-        
-        print(stats)
+
         return render_template("admin/stats.html", stats=stats)
     else:
         return redirect(url_for("admin.login"))
