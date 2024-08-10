@@ -130,6 +130,16 @@ def unflag_sponsor(sponsor_id):
     else:
         return redirect(url_for("admin.login"))
 
+@admin_bp.route("/influencer/<int:influencer_id>", methods=["GET"])
+def influencer_details(influencer_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        influencer_id = request.view_args["influencer_id"]
+        influencer = Influencer.query.filter_by(id=influencer_id).first()
+        
+        return render_template("admin/influencer_profile.html", influencer=influencer)
+    else:
+        return redirect(url_for("admin.login"))
+
 @admin_bp.route("/flag/influencer/<int:influencer_id>", methods=["GET"])
 def flag_influencer(influencer_id):
     if current_user.is_authenticated and session.get("role") == "admin":
@@ -138,7 +148,7 @@ def flag_influencer(influencer_id):
         influencer.flagged = True
         db.session.commit()
         flash("Influencer flagged.", "info")
-        return redirect(url_for("admin.find"))
+        return redirect(url_for("admin.influencer_details", influencer_id=influencer_id))
     else:
         return redirect(url_for("admin.login"))
     
@@ -150,7 +160,7 @@ def unflag_influencer(influencer_id):
         influencer.flagged = False
         db.session.commit()
         flash("Influencer unflagged.", "info")
-        return redirect(url_for("admin.find"))
+        return redirect(url_for("admin.influencer_details", influencer_id=influencer_id))
     else:
         return redirect(url_for("admin.login"))
     

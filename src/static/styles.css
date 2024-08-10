@@ -214,6 +214,11 @@ a {
   overflow-y: scroll;
 }
 
+.table-container-full {
+  margin-top: 16px;
+  min-height: 55vh;
+}
+
 .table-container::-webkit-scrollbar,
 .chat-container::-webkit-scrollbar {
   width: 4px; /* Set the width of the scrollbar */
