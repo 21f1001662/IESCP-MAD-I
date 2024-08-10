@@ -11,9 +11,7 @@ from src.influencer.models import Influencer
 from src.core.models import AdRequest, AdRequestStatusEnum
 from src.core.models import Message, AdRequestStatusEnum, AdRequestSenderEnum
 
-
 admin_bp = Blueprint("admin", __name__)
-
 
 @admin_bp.route("/dashboard")
 def dashboard():
@@ -191,6 +189,95 @@ def unflag_influencer(influencer_id):
         db.session.commit()
         flash("Influencer unflagged.", "info")
         return redirect(url_for("admin.influencer_details", influencer_id=influencer_id))
+    else:
+        return redirect(url_for("admin.login"))
+    
+# route to remove campaigns
+@admin_bp.route("/remove/campaign/<int:campaign_id>", methods=["GET"])
+def remove_campaign(campaign_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        campaign_id = request.view_args["campaign_id"]
+        campaign = Campaigns.query.filter_by(id=campaign_id).first()
+        ad_requests = AdRequest.query.filter_by(campaign=campaign_id).all()
+        
+        # remove all ad requests associated with the campaign
+        for ad_request in ad_requests:
+            # remove all messages associated with the ad request
+            messages = Message.query.filter_by(ad_request=ad_request.id).all()
+            for message in messages:
+                db.session.delete(message)
+                db.session.commit()
+            db.session.delete(ad_request)
+            db.session.commit()
+        db.session.delete(campaign)
+        db.session.commit()
+        flash("Campaign removed.", "info")
+        return redirect(url_for("admin.dashboard"))   
+    else:
+        return redirect(url_for("admin.login"))
+
+# route to remove influencer
+@admin_bp.route("/remove/influencer/<int:influencer_id>", methods=["GET"])
+def remove_influencer(influencer_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        influencer_id = request.view_args["influencer_id"]
+        influencer = Influencer.query.filter_by(id=influencer_id).first()
+        ad_requests = AdRequest.query.filter_by(influencer=influencer_id).all()
+        
+        # remove all ad requests associated with the influencer
+        for ad_request in ad_requests:
+            # remove all messages associated with the ad request
+            messages = Message.query.filter_by(ad_request=ad_request.id).all()
+            for message in messages:
+                db.session.delete(message)
+                db.session.commit()
+            db.session.delete(ad_request)
+            db.session.commit()
+        db.session.delete(influencer)
+        db.session.commit()
+        flash("Influencer removed.", "info")
+        return redirect(url_for("admin.dashboard"))   
+    else:
+        return redirect(url_for("admin.login"))
+
+# route to remove sponsor
+@admin_bp.route("/remove/sponsor/<int:sponsor_id>", methods=["GET"])
+def remove_sponsor(sponsor_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        sponsor_id = request.view_args["sponsor_id"]
+        sponsor = Sponsor.query.filter_by(id=sponsor_id).first()
+        ad_requests = AdRequest.query.filter_by(sponsor=sponsor_id).all()
+        campaigns = Campaigns.query.filter_by(sponsor=sponsor_id).all()
+        
+        # remove all ad requests associated with the sponsor
+        for ad_request in ad_requests:
+            # remove all messages associated with the ad request
+            messages = Message.query.filter_by(ad_request=ad_request.id).all()
+            for message in messages:
+                db.session.delete(message)
+                db.session.commit()
+            db.session.delete(ad_request)
+            db.session.commit()
+        
+        # remove all campaigns associated with the sponsor
+        for campaign in campaigns:
+            ad_requests = AdRequest.query.filter_by(campaign=campaign.id).all()
+            for ad_request in ad_requests:
+                # remove all messages associated with the ad request
+                messages = Message.query.filter_by(ad_request=ad_request.id).all()
+                for message in messages:
+                    db.session.delete(message)
+                    db.session.commit()
+                db.session.delete(ad_request)
+                db.session.commit()
+            db.session.delete(campaign)
+            db.session.commit()
+        
+        
+        db.session.delete(sponsor)
+        db.session.commit()
+        flash("Sponsor removed.", "info")
+        return redirect(url_for("admin.dashboard"))   
     else:
         return redirect(url_for("admin.login"))
 

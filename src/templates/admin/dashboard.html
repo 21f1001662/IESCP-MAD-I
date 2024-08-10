@@ -139,6 +139,10 @@
                             <button class="btn btn-danger me-2">Flag</button>
                         </a>
                         {% endif %}
+
+                        <a href="/admin/remove/campaign/{{campaign.id}}" onclick="return confirmDelete('Are you sure you want to remove this campaign?');">
+                            <button class="btn btn-danger me-2">Remove</button>
+                        </a>
                         
                         <a href="/admin/campaigns/{{campaign.id}}">
                             <button class="btn btn-dark">View</button>
@@ -183,6 +187,10 @@
                             <button class="btn btn-danger me-2">Flag</button>
                         </a>
                         {% endif %}
+
+                        <a href="/admin/remove/sponsor/{{sponsor.id}}" onclick="return confirmDelete('Are you sure you want to remove this sponsor?');">
+                            <button class="btn btn-danger me-2">Remove</button>
+                        </a>
                         
                         <a href="/admin/sponsor/{{sponsor.id}}">
                             <button class="btn btn-dark">View</button>
@@ -228,6 +236,10 @@
                             <button class="btn btn-danger me-2">Flag</button>
                         </a>
                         {% endif %}
+
+                        <a href="/admin/remove/influencer/{{influencer.id}}" onclick="return confirmDelete('Are you sure you want to remove this influencer?');">
+                            <button class="btn btn-danger me-2">Remove</button>
+                        </a>
                         
                         <a href="/admin/influencer/{{influencer.id}}">
                             <button class="btn btn-dark">View</button>
@@ -269,6 +281,11 @@
 
             fullscreenDiv.appendChild(fullImg);
             document.body.appendChild(fullscreenDiv);
+        }
+    </script>
+    <script>
+        function confirmDelete(msg) {
+            return confirm(msg);
         }
     </script>
     {% block js %}{% endblock %}
