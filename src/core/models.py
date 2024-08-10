@@ -51,6 +51,7 @@ class AdRequest(UserMixin, db.Model):
     sender = db.Column(Enum(AdRequestSenderEnum), nullable=False, default=AdRequestSenderEnum.Sponsor)
     influencer = db.Column(db.Integer, db.ForeignKey('influencers.id'))
     created_at = db.Column(db.DateTime, nullable=False)
+    flagged = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, name, budget, campaign, sponsor, influencer, sender):
         self.name = name
@@ -61,6 +62,7 @@ class AdRequest(UserMixin, db.Model):
         self.influencer = influencer
         self.sender = sender
         self.created_at = datetime.now()
+        self.flagged = False
         
     def __repr__(self):
         return f"<id {self.id} | {self.name}>"

@@ -25,6 +25,7 @@ class Influencer(UserMixin, db.Model): #UserMixin is a class that includes defau
     youtube_subscribers = db.Column(db.Integer, nullable=True)
     facebook_handle = db.Column(db.String, nullable=True)
     facebook_followers = db.Column(db.Integer, nullable=True)
+    flagged = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, email, password, name, about, image, category, niche, instagram_handle, instagram_followers, x_handle, x_followers, youtube_handle, youtube_subscribers, facebook_handle, facebook_followers):
         self.email = email
@@ -44,6 +45,7 @@ class Influencer(UserMixin, db.Model): #UserMixin is a class that includes defau
         self.youtube_subscribers = youtube_subscribers
         self.facebook_handle = facebook_handle
         self.facebook_followers = facebook_followers
+        self.flagged = False
 
     def __repr__(self):
         return f"<email {self.email}>"

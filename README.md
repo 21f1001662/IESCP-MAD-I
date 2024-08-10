@@ -40,7 +40,7 @@ python manage.py run
 
 8. Create admin user
 ```bash
-python manage.py create-admin
+python manage.py create_admin
 ```
 
 9. Open the browser and go to `http://localhost:5000`

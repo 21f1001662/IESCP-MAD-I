@@ -1,10 +1,16 @@
 from flask import session, Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
 from .forms import AdminLoginForm, AdminRegisterForm
+from src.sponsor.forms import AdRequestUpdateForm
 import os
 
 from src import bcrypt, db
 from src.admin.models import Admin
+from src.sponsor.models import Campaigns, VisibilityEnum, Sponsor
+from src.influencer.models import Influencer
+from src.core.models import AdRequest, AdRequestStatusEnum
+from src.core.models import Message, AdRequestStatusEnum, AdRequestSenderEnum
+
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -12,7 +18,155 @@ admin_bp = Blueprint("admin", __name__)
 @admin_bp.route("/dashboard")
 def dashboard():
     if current_user.is_authenticated and session.get("role") == "admin":
-        return render_template("admin/dashboard.html")
+        campaigns = Campaigns.query.filter_by(flagged=False).all()
+        flagged_campaigns = Campaigns.query.filter_by(flagged=True).all()
+        flagged_sponsors = Sponsor.query.filter_by(flagged=True).all()
+        flagged_influencers = Influencer.query.filter_by(flagged=True).all()
+        return render_template("admin/dashboard.html", campaigns=campaigns, flagged_campaigns=flagged_campaigns, flagged_sponsors=flagged_sponsors, flagged_influencers=flagged_influencers)
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/flag/campaigns/<int:campaign_id>", methods=["GET"])
+def flag_campaign(campaign_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        campaign_id = request.view_args["campaign_id"]
+        campaign = Campaigns.query.filter_by(id=campaign_id).first()
+        campaign.flagged = True
+        db.session.commit()
+        flash("Campaign flagged.", "info")
+        return redirect(url_for("admin.campaign_details", campaign_id=campaign_id))
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/unflag/campaigns/<int:campaign_id>", methods=["GET"])
+def unflag_campaign(campaign_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        campaign_id = request.view_args["campaign_id"]
+        campaign = Campaigns.query.filter_by(id=campaign_id).first()
+        campaign.flagged = False
+        db.session.commit()
+        flash("Campaign unflagged.", "info")
+        return redirect(url_for("admin.campaign_details", campaign_id=campaign_id))
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/campaigns/<int:campaign_id>", methods=["GET"])
+def campaign_details(campaign_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        campaign_id = request.view_args["campaign_id"]
+        campaign_data = Campaigns.query.filter_by(id=campaign_id).first()
+        
+        ad_requests = db.session.query(AdRequest, Sponsor, Influencer).\
+            join(Sponsor, AdRequest.sponsor == Sponsor.id).\
+            join(Influencer, AdRequest.influencer == Influencer.id).\
+            filter(AdRequest.campaign == campaign_id).all()
+        
+        return render_template("admin/campaign_details.html", campaign=campaign_data, ad_requests=ad_requests, AdRequestStatusEnum=AdRequestStatusEnum)
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/ad_request/<int:ad_request_id>", methods=['GET'])
+def ad_request(ad_request_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        ad_request = AdRequest.query.filter_by(id=ad_request_id).first()
+        
+        if ad_request is None:
+            flash("Ad request not found!", "danger")
+            return redirect(url_for("influencer.requests"))
+        
+        influencer = Influencer.query.filter_by(id = current_user.id).first()
+        campaign = Campaigns.query.filter_by(id = ad_request.campaign).first()
+        messages = Message.query.filter_by(ad_request = ad_request_id )
+        
+        return render_template("admin/ad_request.html", ad_request=ad_request, influencer=influencer, messages=messages, campaign=campaign, AdRequestStatusEnum=AdRequestStatusEnum, AdRequestSenderEnum=AdRequestSenderEnum)
+    else:
+        return redirect(url_for("admin.login"))
+   
+@admin_bp.route("/flag/ad_request/<int:ad_request_id>", methods=["GET"])
+def flag_ad_request(ad_request_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        ad_request_id = request.view_args["ad_request_id"]
+        ad_request = AdRequest.query.filter_by(id=ad_request_id).first()
+        ad_request.flagged = True
+        db.session.commit()
+        flash("Ad request flagged.", "info")
+        return redirect(url_for("admin.ad_request", ad_request_id=ad_request_id))
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/unflag/ad_request/<int:ad_request_id>", methods=["GET"])
+def unflag_ad_request(ad_request_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        ad_request_id = request.view_args["ad_request_id"]
+        ad_request = AdRequest.query.filter_by(id=ad_request_id).first()
+        ad_request.flagged = False
+        db.session.commit()
+        flash("Ad request unflagged.", "info")
+        return redirect(url_for("admin.ad_request", ad_request_id=ad_request_id))
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/flag/sponsor/<int:sponsor_id>", methods=["GET"])
+def flag_sponsor(sponsor_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        sponsor_id = request.view_args["sponsor_id"]
+        sponsor = Sponsor.query.filter_by(id=sponsor_id).first()
+        sponsor.flagged = True
+        db.session.commit()
+        flash("Sponsor flagged.", "info")
+        return redirect(url_for("admin.find"))
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/unflag/sponsor/<int:sponsor_id>", methods=["GET"])
+def unflag_sponsor(sponsor_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        sponsor_id = request.view_args["sponsor_id"]
+        sponsor = Sponsor.query.filter_by(id=sponsor_id).first()
+        sponsor.flagged = False
+        db.session.commit()
+        flash("Sponsor unflagged.", "info")
+        return redirect(url_for("admin.find"))
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/flag/influencer/<int:influencer_id>", methods=["GET"])
+def flag_influencer(influencer_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        influencer_id = request.view_args["influencer_id"]
+        influencer = Influencer.query.filter_by(id=influencer_id).first()
+        influencer.flagged = True
+        db.session.commit()
+        flash("Influencer flagged.", "info")
+        return redirect(url_for("admin.find"))
+    else:
+        return redirect(url_for("admin.login"))
+    
+@admin_bp.route("/unflag/influencer/<int:influencer_id>", methods=["GET"])
+def unflag_influencer(influencer_id):
+    if current_user.is_authenticated and session.get("role") == "admin":
+        influencer_id = request.view_args["influencer_id"]
+        influencer = Influencer.query.filter_by(id=influencer_id).first()
+        influencer.flagged = False
+        db.session.commit()
+        flash("Influencer unflagged.", "info")
+        return redirect(url_for("admin.find"))
+    else:
+        return redirect(url_for("admin.login"))
+    
+@admin_bp.route("/find")
+def find():
+    if current_user.is_authenticated and session.get("role") == "admin":
+        sponsors = Sponsor.query.all()
+        
+        return render_template("admin/find.html", sponsors=sponsors)
+    else:
+        return redirect(url_for("admin.login"))
+
+@admin_bp.route("/stats")
+def stats():
+    if current_user.is_authenticated and session.get("role") == "admin":
+        return render_template("admin/stats.html")
     else:
         return redirect(url_for("admin.login"))
 

@@ -21,6 +21,7 @@ class Sponsor(UserMixin, db.Model): #UserMixin is a class that includes default 
     role = db.Column(db.String, nullable=False, default="sponsor")
     industry = db.Column(db.String, nullable=False)
     budget = db.Column(db.Integer, nullable=False)
+    flagged = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, email, password, name, about, image, industry, budget):
         self.email = email
@@ -32,6 +33,7 @@ class Sponsor(UserMixin, db.Model): #UserMixin is a class that includes default 
         self.image = image
         self.industry = industry
         self.budget = budget
+        self.flagged = False
 
     def __repr__(self):
         return f"<email {self.email}>"
@@ -48,6 +50,7 @@ class Campaigns(UserMixin, db.Model): #UserMixin is a class that includes defaul
     visibility = db.Column(Enum(VisibilityEnum), nullable=False)
     goals = db.Column(db.String, nullable=False)
     created_by = db.Column(db.Integer, db.ForeignKey('sponsors.id'))
+    flagged = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, name, description, start_date, end_date, budget, visibility, goals, created_by):
         self.name = name
@@ -58,6 +61,7 @@ class Campaigns(UserMixin, db.Model): #UserMixin is a class that includes defaul
         self.visibility = visibility
         self.goals = goals
         self.created_by = created_by
+        self.flagged = False
 
     def __repr__(self):
         return f"<name {self.id} | {self.name}>"
